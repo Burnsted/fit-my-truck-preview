@@ -1,21 +1,29 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.2.8",
+          "react/jsx-runtime": "https://esm.sh/react@19.2.8/jsx-runtime",
+          "react/jsx-dev-runtime": "https://esm.sh/react@19.2.8/jsx-dev-runtime",
+          "react-dom": "https://esm.sh/react-dom@19.2.8",
+          "react-dom/client": "https://esm.sh/react-dom@19.2.8/client"
+        }
+      }
+    </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Fit My Truck helps contractors and service fleets compare truck capability, range, towing, payload, charging, and operating cost."
+    />
     <meta name="theme-color" content="#0f2a24" />
-    <title>Fit My Truck preview</title>
-    <style>
-      body { margin: 0; min-height: 100vh; font-family: system-ui, sans-serif; background: #d9f2ef; color: #0f2a24; display: grid; place-items: center; padding: 24px; }
-      main { max-width: 28rem; background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 12px 36px #0f2a2414; }
-      h1 { margin: 0 0 8px; letter-spacing: 0.04em; }
-      p { line-height: 1.5; }
-    </style>
+    <title>Fit My Truck</title>
+    <script type="module" crossorigin src="./assets/index-CP5LbG60.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-4GrT7ohF.css">
   </head>
   <body>
-    <main>
-      <h1>FIT MY TRUCK</h1>
-      <p>Public preview host is ready. The compiled Workday Fit Assessment will appear here as soon as the private repo publishes <code>dist-preview/</code> (GitHub secret <code>PREVIEW_DEPLOY_TOKEN</code> or a manual copy).</p>
-    </main>
+    <div id="root"></div>
   </body>
 </html>
