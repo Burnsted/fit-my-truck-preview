@@ -2,8 +2,13 @@
 
 Shareable HTTPS demo of [Fit My Truck](https://github.com/Burnsted/fit-my-truck).
 
-**Intended phone link (no login):** https://burnsted.github.io/fit-my-truck-preview/
+**Phone link (no ChatGPT login):** https://burnsted.github.io/fit-my-truck-preview/
 
-This repository is public on purpose so GitHub Pages can serve the compiled Vite build. The source app, tests, and Android/Capacitor project stay private in `Burnsted/fit-my-truck`.
+The compiled app is already in this repo. GitHub Pages still has to be turned on once:
 
-The compiled `index.html` / `assets/` are published from the private repo by the **Deploy public web preview** workflow once `PREVIEW_DEPLOY_TOKEN` is set, or by copying `dist-preview/` from a local `pnpm build:preview`.
+1. Open https://github.com/Burnsted/fit-my-truck-preview/settings/pages
+2. **Build and deployment → Source** = **Deploy from a branch**
+3. Branch **`main`**, folder **`/ (root)`**, then **Save**
+4. Wait about a minute and open the URL above
+
+Source, tests, and Android/Capacitor stay private in `Burnsted/fit-my-truck`.
