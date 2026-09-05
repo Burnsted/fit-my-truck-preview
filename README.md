@@ -4,11 +4,6 @@ Shareable HTTPS demo of [Fit My Truck](https://github.com/Burnsted/fit-my-truck)
 
 **Phone link (no ChatGPT login):** https://burnsted.github.io/fit-my-truck-preview/
 
-The compiled app is already in this repo. GitHub Pages still has to be turned on once:
+GitHub Pages is enabled: **Deploy from a branch** → `main` → `/ (root)`.
 
-1. Open https://github.com/Burnsted/fit-my-truck-preview/settings/pages
-2. **Build and deployment → Source** = **Deploy from a branch**
-3. Branch **`main`**, folder **`/ (root)`**, then **Save**
-4. Wait about a minute and open the URL above
-
-Source, tests, and Android/Capacitor stay private in `Burnsted/fit-my-truck`.
+If the link still 404s for a few minutes after enabling Pages, wait for the first publish to finish, then hard-refresh. Source, tests, and Android/Capacitor stay private in `Burnsted/fit-my-truck`.
