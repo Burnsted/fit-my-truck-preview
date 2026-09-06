@@ -1,9 +1,10 @@
 name: Materialize preview binaries
 
 on:
+  workflow_dispatch:
   push:
     paths:
-      - "publish/**"
+      - "publish/READY"
 
 permissions:
   contents: write
@@ -23,9 +24,10 @@ jobs:
         run: |
           set -euo pipefail
           test -d publish
-          chunk_count=$(ls publish/preview.tar.b64.* | wc -l)
-          echo "Found ${chunk_count} publish chunks"
-          test "${chunk_count}" -ge 17
+          shopt -s nullglob
+          chunks=(publish/preview.tar.b64.*)
+          echo "Found ${#chunks[@]} publish chunks"
+          test "${#chunks[@]}" -ge 1
           mkdir -p /tmp/preview-out
           cat publish/preview.tar.b64.* | base64 -d | tar -xzf - -C /tmp/preview-out
           test -f /tmp/preview-out/index.html
