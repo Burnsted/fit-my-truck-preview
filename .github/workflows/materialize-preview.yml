@@ -1,0 +1,49 @@
+name: Materialize preview binaries
+
+on:
+  push:
+    paths:
+      - "publish/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: materialize-preview
+  cancel-in-progress: true
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode tarball and git-push complete preview
+        env:
+          SOURCE_SHA: 1c92c2b7d5c83e48c58bda7f057471985a28fd84
+        run: |
+          set -euo pipefail
+          test -d publish
+          chunk_count=$(ls publish/preview.tar.b64.* | wc -l)
+          echo "Found ${chunk_count} publish chunks"
+          test "${chunk_count}" -ge 17
+          mkdir -p /tmp/preview-out
+          cat publish/preview.tar.b64.* | base64 -d | tar -xzf - -C /tmp/preview-out
+          test -f /tmp/preview-out/index.html
+          test -f /tmp/preview-out/vehicles/r1t.webp
+          test -f /tmp/preview-out/assets/index-BaS-FThq.css
+          test -f /tmp/preview-out/assets/index-BKQydoY6.js
+          python3 -c 'from pathlib import Path; p=Path("/tmp/preview-out/vehicles/r1t.webp"); data=p.read_bytes(); assert data[:4]==b"RIFF" and data[8:12]==b"WEBP", data[:16]; print(f"r1t.webp ok: {len(data)} bytes, RIFF/WEBP")'
+
+          git checkout --orphan preview-publish
+          git rm -rfq . || true
+          shopt -s dotglob
+          cp -a /tmp/preview-out/* .
+          shopt -u dotglob
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git status --short
+          git commit -m "Publish complete preview from fit-my-truck ${SOURCE_SHA} (PR #10 + #11)"
+          git branch -M main
+          git push --force origin main
