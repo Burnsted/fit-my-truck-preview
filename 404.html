@@ -20,22 +20,8 @@
     />
     <meta name="theme-color" content="#0f2a24" />
     <title>Fit My Truck</title>
-    <link rel="stylesheet" crossorigin href="./assets/index-4GrT7ohF.css">
-    <script type="module">
-      const parts = [
-        "./assets/index-CP5LbG60.part0",
-        "./assets/index-CP5LbG60.part1",
-        "./assets/index-CP5LbG60.part2",
-      ];
-      const sources = await Promise.all(
-        parts.map(async (url) => {
-          const response = await fetch(url);
-          if (!response.ok) throw new Error(`Failed to load ${url}`);
-          return response.text();
-        }),
-      );
-      await import(URL.createObjectURL(new Blob(sources, { type: "text/javascript" })));
-    </script>
+    <script type="module" crossorigin src="./assets/index-DqJ3hCyr.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DJrzNmZF.css">
   </head>
   <body>
     <div id="root"></div>
