@@ -2,8 +2,8 @@
 
 Shareable HTTPS demo of [Fit My Truck](https://github.com/Burnsted/fit-my-truck).
 
-**Phone link (no ChatGPT login):** https://burnsted.github.io/fit-my-truck-preview/
+**Open on a phone (no login):** https://burnsted.github.io/fit-my-truck-preview/
 
-GitHub Pages is enabled: **Deploy from a branch** → `main` → `/ (root)`.
+This repository contains only the compiled Vite production build. The source app, tests, and Android/Capacitor project stay private.
 
-If the link still 404s for a few minutes after enabling Pages, wait for the first publish to finish, then hard-refresh. Source, tests, and Android/Capacitor stay private in `Burnsted/fit-my-truck`.
+Do not send friends to the ChatGPT-hosted preview; that URL is sign-in gated.
