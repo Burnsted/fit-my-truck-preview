@@ -18,6 +18,76 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Rebuild chunks from slices and verify SHAs
+        run: |
+          python3 << 'PY'
+          import json, hashlib, re
+          from collections import defaultdict
+          from pathlib import Path
+
+          def blob_sha(data: bytes) -> str:
+              return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+          def apply_fixes(asm: Path) -> None:
+              fix_path = asm / "fixes.json"
+              if not fix_path.exists():
+                  return
+              for fix in json.loads(fix_path.read_text()):
+                  p = asm / fix["path"]
+                  if not p.exists():
+                      continue
+                  current = p.read_bytes()
+                  if blob_sha(current) == fix["expected_sha"]:
+                      continue
+                  b = bytearray(current)
+                  for op in fix["ops"]:
+                      kind = op["op"]
+                      if kind == "replace":
+                          off = op["offset"]
+                          old = op["old"].encode("ascii")
+                          new = op["new"].encode("ascii")
+                          got = bytes(b[off:off+len(old)])
+                          if got != old:
+                              raise SystemExit(f"{p} replace @{off}: got {got!r} want {old!r}")
+                          b[off:off+len(old)] = new
+                      elif kind == "delete":
+                          del b[op["offset"]:op["offset"]+op["length"]]
+                      elif kind == "truncate":
+                          b = bytearray(bytes(b)[:op["length"]])
+                      else:
+                          raise SystemExit(f"unknown op {kind}")
+                  data = bytes(b)
+                  sha = blob_sha(data)
+                  if sha != fix["expected_sha"]:
+                      raise SystemExit(f"{p} sha {sha} != {fix['expected_sha']}")
+                  p.write_bytes(data)
+
+          asm = Path("assets/_asm")
+          apply_fixes(asm)
+          slices = defaultdict(list)
+          for p in asm.iterdir():
+              m = re.fullmatch(r"(p\d+\.c\d+)\.s(\d+)", p.name)
+              if m:
+                  slices[m.group(1)].append((int(m.group(2)), p))
+          for chunk, parts in slices.items():
+              parts.sort()
+              (asm / chunk).write_bytes(b"".join(fp.read_bytes() for _, fp in parts))
+          apply_fixes(asm)
+          expected = json.loads((asm / "expected.json").read_text())
+          missing = []
+          for name, info in expected.items():
+              p = asm / name
+              if not p.exists():
+                  missing.append(name)
+                  continue
+              data = p.read_bytes()
+              sha = blob_sha(data)
+              if len(data) != info["size"] or sha != info["sha"]:
+                  raise SystemExit(f"bad chunk {name} size={len(data)} sha={sha}")
+              print(f"ok {name}")
+          if missing:
+              raise SystemExit("missing chunks: " + ",".join(missing))
+          PY
       - name: Concatenate chunks into final JS parts
         run: |
           set -euo pipefail
