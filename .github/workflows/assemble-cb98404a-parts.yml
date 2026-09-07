@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "assets/_asm/cb/**"
       - "assets/_asm/ASSEMBLE_CB"
       - ".github/workflows/assemble-cb98404a-parts.yml"
 
@@ -20,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate verified chunks into JS parts
+      - name: Concatenate verified slices into JS parts
         run: |
           set -euo pipefail
           git config user.name "Burnsted"
           git config user.email "coachted14@gmail.com"
           python3 << 'PY'
-          import hashlib, pathlib, subprocess
+          import hashlib, pathlib, re
           root = pathlib.Path("assets/_asm/cb")
           expected = {
             1: ("4f76d7ac1ea3880adde75bbf3056bc664dba4494", 81920),
@@ -50,21 +49,30 @@ jobs:
           def blob_sha(data: bytes) -> str:
               return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
           made = []
+          files = list(root.iterdir()) if root.exists() else []
           for i, (want_sha, want_size) in expected.items():
-              chunks = sorted(root.glob(f"p{i}.c*"), key=lambda p: int(p.name.split(".c",1)[1]))
-              if not chunks:
-                  print(f"skip part{i}: no chunks")
-                  continue
-              data = b"".join(p.read_bytes() for p in chunks)
+              slices = [p for p in files if re.fullmatch(rf"p{i}\\.s\\d+", p.name)]
+              slices.sort(key=lambda p: int(p.name.split(".s", 1)[1]))
+              if slices:
+                  data = b"".join(p.read_bytes() for p in slices)
+                  src = f"{len(slices)} slices"
+              else:
+                  chunks = [p for p in files if re.fullmatch(rf"p{i}\\.c\\d+", p.name)]
+                  chunks.sort(key=lambda p: int(p.name.split(".c", 1)[1]))
+                  if not chunks:
+                      print(f"skip part{i}: no slices/chunks")
+                      continue
+                  data = b"".join(p.read_bytes() for p in chunks)
+                  src = f"{len(chunks)} chunks"
               if len(data) != want_size:
-                  print(f"skip part{i}: size {len(data)} != {want_size} chunks={len(chunks)}")
+                  print(f"skip part{i}: size {len(data)} != {want_size} ({src})")
                   continue
               sha = blob_sha(data)
               if sha != want_sha:
-                  raise SystemExit(f"part{i} sha {sha} != {want_sha}")
+                  raise SystemExit(f"part{i} sha {sha} != {want_sha} ({src})")
               out = pathlib.Path(f"assets/index-cb98404a.part{i}")
               out.write_bytes(data)
-              print(f"ok part{i} sha={sha} size={len(data)}")
+              print(f"ok part{i} sha={sha} size={len(data)} {src}")
               made.append(i)
           open("/tmp/made.txt","w").write("\n".join(map(str, made)))
           PY
