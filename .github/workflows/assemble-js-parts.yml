@@ -1,0 +1,39 @@
+name: Assemble inlined JS parts
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/_asm/READY"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: assemble-js-parts
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Concatenate chunks into final JS parts
+        run: |
+          set -euo pipefail
+          git config user.name "Burnsted"
+          git config user.email "coachted14@gmail.com"
+          for i in $(seq 0 17); do
+            out="assets/index-e8d7c5b3.part${i}"
+            cat "assets/_asm/p${i}.c0" "assets/_asm/p${i}.c1" "assets/_asm/p${i}.c2" "assets/_asm/p${i}.c3" > "$out"
+            expected=80000
+            if [ "$i" -eq 17 ]; then expected=63022; fi
+            actual=$(wc -c < "$out")
+            echo "part$i size=$actual expected=$expected"
+            test "$actual" -eq "$expected"
+            git add "$out"
+            if ! git diff --cached --quiet -- "$out"; then
+              git commit -m "Add inlined-photo preview JS part ${i} for 1c92c2b7"
+            fi
+          done
+          git push origin HEAD:main
