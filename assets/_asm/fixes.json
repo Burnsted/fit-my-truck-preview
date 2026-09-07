@@ -50,5 +50,12 @@
     "ops": [
       {"op": "delete", "offset": 2952, "length": 2}
     ]
+  },
+  {
+    "path": "p3.c1.s2",
+    "expected_sha": "03ca22787b4926b8c1b6910d05d0829f08a5be1b",
+    "ops": [
+      {"op": "replace", "offset": 2157, "old": "p", "new": "v"}
+    ]
   }
 ]
