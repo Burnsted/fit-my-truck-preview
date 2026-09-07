@@ -107,5 +107,12 @@
     "ops": [
       {"op": "delete", "offset": 786, "length": 1}
     ]
+  },
+  {
+    "path": "p5.c2.s0",
+    "expected_sha": "c97f595e35154a8bdf0fad285f6a98b5a1b12b68",
+    "ops": [
+      {"op": "replace", "offset": 358, "old": "p", "new": "v"}
+    ]
   }
 ]
