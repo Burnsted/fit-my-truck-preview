@@ -85,5 +85,13 @@
     "ops": [
       {"op": "replace", "offset": 1541, "old": "GB", "new": "HG"}
     ]
+  },
+  {
+    "path": "p4.c1.s2",
+    "expected_sha": "5a4ac18a73d404ea69903c0881a096db6e0091a7",
+    "ops": [
+      {"op": "replace", "offset": 2942, "old": "p", "new": "v"},
+      {"op": "replace", "offset": 3206, "old": "sc", "new": "iy"}
+    ]
   }
 ]
