@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate verified slices into JS parts
+      - name: Concatenate verified chunks/slices into JS parts
         run: |
           set -euo pipefail
           git config user.name "Burnsted"
@@ -56,36 +56,37 @@ jobs:
           made = []
           files = list(root.iterdir()) if root.exists() else []
           for i, (want_sha, want_size) in expected.items():
+              groups = []
+              chunks = []
+              for p in files:
+                  n = numbered(p.name, "p%d.c" % i)
+                  if n is not None:
+                      chunks.append((n, p))
+              if chunks:
+                  chunks.sort()
+                  groups.append(("chunks", b"".join(p.read_bytes() for _, p in chunks)))
               slices = []
               for p in files:
                   n = numbered(p.name, "p%d.s" % i)
                   if n is not None:
                       slices.append((n, p))
-              slices.sort()
               if slices:
-                  data = b"".join(p.read_bytes() for _, p in slices)
-                  src = "%d slices" % len(slices)
-              else:
-                  chunks = []
-                  for p in files:
-                      n = numbered(p.name, "p%d.c" % i)
-                      if n is not None:
-                          chunks.append((n, p))
-                  chunks.sort()
-                  if not chunks:
-                      print("skip part%d: no slices/chunks" % i)
-                      continue
-                  data = b"".join(p.read_bytes() for _, p in chunks)
-                  src = "%d chunks" % len(chunks)
-              if len(data) != want_size:
-                  print("skip part%d: size %d != %d (%s)" % (i, len(data), want_size, src))
+                  slices.sort()
+                  groups.append(("slices", b"".join(p.read_bytes() for _, p in slices)))
+              chosen = None
+              src = None
+              for label, data in groups:
+                  if len(data) == want_size and blob_sha(data) == want_sha:
+                      chosen = data
+                      src = label
+                      break
+              if chosen is None:
+                  detail = ", ".join("%s=%d" % (label, len(data)) for label, data in groups) or "none"
+                  print("skip part%d: no matching group (%s)" % (i, detail))
                   continue
-              sha = blob_sha(data)
-              if sha != want_sha:
-                  raise SystemExit("part%d sha %s != %s (%s)" % (i, sha, want_sha, src))
               out = pathlib.Path("assets/index-cb98404a.part%d" % i)
-              out.write_bytes(data)
-              print("ok part%d sha=%s size=%d %s" % (i, sha, len(data), src))
+              out.write_bytes(chosen)
+              print("ok part%d sha=%s size=%d %s" % (i, want_sha, want_size, src))
               made.append(i)
           open("/tmp/made.txt","w").write("\n".join(str(x) for x in made))
           PY
@@ -99,7 +100,7 @@ jobs:
             if git diff --cached --quiet -- "assets/index-cb98404a.part${i}"; then
               echo "part$i already exact"
             else
-              git commit -m "Add inlined-photo preview JS part ${i} for 1c92c2b7"
+              git commit -m "Add inlined-photo JS part ${i} (index-cb98404a) from 1c92c2b7"
             fi
           done < /tmp/made.txt
           git push origin HEAD:main || echo "nothing to push"
