@@ -1,0 +1,37 @@
+name: Cleanup stale preview assets after PR14
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/_fix/CLEANUP_PR14"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cleanup-stale
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove assets the live HTML no longer references
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f assets/index-BaS-FThq.css \
+                assets/index-cb98404a.part* \
+                assets/index-cb98404ab.part*
+          rm -rf assets/_hex assets/_fix assets/_src assets/_asm
+          git add -A -- assets
+          if git diff --cached --quiet; then
+            echo "nothing to clean"
+          else
+            git commit -m "Remove stale preview assets no longer referenced by PR14 HTML"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
