@@ -25,7 +25,7 @@ jobs:
           git config user.name "Burnsted"
           git config user.email "coachted14@gmail.com"
           python3 << 'PY'
-          import hashlib, pathlib, re
+          import hashlib, pathlib
           root = pathlib.Path("assets/_asm/cb")
           expected = {
             1: ("4f76d7ac1ea3880adde75bbf3056bc664dba4494", 81920),
@@ -46,35 +46,48 @@ jobs:
             16: ("63b8e7a94d6b6477b5613f379197cb35c0483362", 81920),
             17: ("85857492769fbc6009c77e66ca833e4f12af6d3d", 30382),
           }
-          def blob_sha(data: bytes) -> str:
+          def blob_sha(data):
               return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+          def numbered(name, prefix):
+              if not name.startswith(prefix):
+                  return None
+              rest = name[len(prefix):]
+              return int(rest) if rest.isdigit() else None
           made = []
           files = list(root.iterdir()) if root.exists() else []
           for i, (want_sha, want_size) in expected.items():
-              slices = [p for p in files if re.fullmatch(rf"p{i}\\.s\\d+", p.name)]
-              slices.sort(key=lambda p: int(p.name.split(".s", 1)[1]))
+              slices = []
+              for p in files:
+                  n = numbered(p.name, "p%d.s" % i)
+                  if n is not None:
+                      slices.append((n, p))
+              slices.sort()
               if slices:
-                  data = b"".join(p.read_bytes() for p in slices)
-                  src = f"{len(slices)} slices"
+                  data = b"".join(p.read_bytes() for _, p in slices)
+                  src = "%d slices" % len(slices)
               else:
-                  chunks = [p for p in files if re.fullmatch(rf"p{i}\\.c\\d+", p.name)]
-                  chunks.sort(key=lambda p: int(p.name.split(".c", 1)[1]))
+                  chunks = []
+                  for p in files:
+                      n = numbered(p.name, "p%d.c" % i)
+                      if n is not None:
+                          chunks.append((n, p))
+                  chunks.sort()
                   if not chunks:
-                      print(f"skip part{i}: no slices/chunks")
+                      print("skip part%d: no slices/chunks" % i)
                       continue
-                  data = b"".join(p.read_bytes() for p in chunks)
-                  src = f"{len(chunks)} chunks"
+                  data = b"".join(p.read_bytes() for _, p in chunks)
+                  src = "%d chunks" % len(chunks)
               if len(data) != want_size:
-                  print(f"skip part{i}: size {len(data)} != {want_size} ({src})")
+                  print("skip part%d: size %d != %d (%s)" % (i, len(data), want_size, src))
                   continue
               sha = blob_sha(data)
               if sha != want_sha:
-                  raise SystemExit(f"part{i} sha {sha} != {want_sha} ({src})")
-              out = pathlib.Path(f"assets/index-cb98404a.part{i}")
+                  raise SystemExit("part%d sha %s != %s (%s)" % (i, sha, want_sha, src))
+              out = pathlib.Path("assets/index-cb98404a.part%d" % i)
               out.write_bytes(data)
-              print(f"ok part{i} sha={sha} size={len(data)} {src}")
+              print("ok part%d sha=%s size=%d %s" % (i, sha, len(data), src))
               made.append(i)
-          open("/tmp/made.txt","w").write("\n".join(map(str, made)))
+          open("/tmp/made.txt","w").write("\n".join(str(x) for x in made))
           PY
           if [ ! -s /tmp/made.txt ]; then
             echo "no complete parts"
