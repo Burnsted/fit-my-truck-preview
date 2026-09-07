@@ -1,0 +1,343 @@
+{
+  "src": [
+    {
+      "name": "index-BXAnjkA5.src0",
+      "size": 25600,
+      "sha": "31776620c671ab2727e0474a95a055b3e8051797"
+    },
+    {
+      "name": "index-BXAnjkA5.src1",
+      "size": 25600,
+      "sha": "faa053dbbb8ff5da610129656f541790f0bda196"
+    },
+    {
+      "name": "index-BXAnjkA5.src2",
+      "size": 25600,
+      "sha": "580f749771553e9e1ab4d92b0017f0130a1bbb58"
+    },
+    {
+      "name": "index-BXAnjkA5.src3",
+      "size": 25600,
+      "sha": "4b8c9af7442b3c4da9a0503779f5fb44887656b1"
+    },
+    {
+      "name": "index-BXAnjkA5.src4",
+      "size": 25600,
+      "sha": "6f924a6a2364bc610ea48afd987046f7a1fb4188"
+    },
+    {
+      "name": "index-BXAnjkA5.src5",
+      "size": 20009,
+      "sha": "c8eb36d23f4b96cfce8de3075d2515ee3c58630a"
+    }
+  ],
+  "hex": [
+    {
+      "name": "hummerev-18.c0",
+      "size": 14352,
+      "sha": "d330afea6a8a5be4a88a02c2d544d8aa1d4829b7",
+      "stem": "hummerev-18",
+      "idx": 0,
+      "nchunks": 1
+    },
+    {
+      "name": "hummerev-20.c0",
+      "size": 24000,
+      "sha": "6e342dc839ffb75ee7468f97b4c20fc90d7a93cd",
+      "stem": "hummerev-20",
+      "idx": 0,
+      "nchunks": 3
+    },
+    {
+      "name": "hummerev-20.c1",
+      "size": 24000,
+      "sha": "6f58c65114c802842d48a9cdb08d7b9374afafa7",
+      "stem": "hummerev-20",
+      "idx": 1,
+      "nchunks": 3
+    },
+    {
+      "name": "hummerev-20.c2",
+      "size": 556,
+      "sha": "435302dae09d32e118edd3b604860b9342f3d46c",
+      "stem": "hummerev-20",
+      "idx": 2,
+      "nchunks": 3
+    },
+    {
+      "name": "hummerev-22.c0",
+      "size": 24000,
+      "sha": "51528769b66ab23ea0081fdad09c875ceacd12e3",
+      "stem": "hummerev-22",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "hummerev-22.c1",
+      "size": 14652,
+      "sha": "29efc9ccb6701ac4f658bb3060364cf36fb98187",
+      "stem": "hummerev-22",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "lightning-18.c0",
+      "size": 24000,
+      "sha": "41435d94d76f9cdee3406baa8e5127d1482befd0",
+      "stem": "lightning-18",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "lightning-18.c1",
+      "size": 6260,
+      "sha": "180eb8c41cc06fe204b32a4b08dfbf4eebcf872b",
+      "stem": "lightning-18",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "lightning-20.c0",
+      "size": 24000,
+      "sha": "c63e7d345753e2000d278609a622dab3535e2bf8",
+      "stem": "lightning-20",
+      "idx": 0,
+      "nchunks": 3
+    },
+    {
+      "name": "lightning-20.c1",
+      "size": 24000,
+      "sha": "b4987bf556be91747e2002091c9c7cae0ab1dae8",
+      "stem": "lightning-20",
+      "idx": 1,
+      "nchunks": 3
+    },
+    {
+      "name": "lightning-20.c2",
+      "size": 168,
+      "sha": "21e729cc1f15929a24d7b8fdfad43420d9ce7cb3",
+      "stem": "lightning-20",
+      "idx": 2,
+      "nchunks": 3
+    },
+    {
+      "name": "lightning-22.c0",
+      "size": 24000,
+      "sha": "3c65076fc153caf09b75a32abb117bd82016ac15",
+      "stem": "lightning-22",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "lightning-22.c1",
+      "size": 2644,
+      "sha": "4b575b3ce5bb8e7dea3de090ba939af4ff1654d4",
+      "stem": "lightning-22",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "r1t-20at.c0",
+      "size": 24000,
+      "sha": "99f73799a03f96b86efc2c42735fc469e5bf2ded",
+      "stem": "r1t-20at",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "r1t-20at.c1",
+      "size": 7976,
+      "sha": "eb17c9725b9587682cbe45a21125f16081428c93",
+      "stem": "r1t-20at",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "r1t-21.c0",
+      "size": 24000,
+      "sha": "ca16e8cfb00d901c8f2f0c62733d5b152642e9f8",
+      "stem": "r1t-21",
+      "idx": 0,
+      "nchunks": 3
+    },
+    {
+      "name": "r1t-21.c1",
+      "size": 24000,
+      "sha": "5d600f809677e0ed77919ce6db17ad042e950f62",
+      "stem": "r1t-21",
+      "idx": 1,
+      "nchunks": 3
+    },
+    {
+      "name": "r1t-21.c2",
+      "size": 12072,
+      "sha": "ea40328b28c90958107b2cc076a3966e531ab1c0",
+      "stem": "r1t-21",
+      "idx": 2,
+      "nchunks": 3
+    },
+    {
+      "name": "r1t-22range.c0",
+      "size": 24000,
+      "sha": "53b3121e1430e423529d7f73363e3b7aea277f88",
+      "stem": "r1t-22range",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "r1t-22range.c1",
+      "size": 17008,
+      "sha": "19293c9727e37129cc921a9ed2e83fc268736ba3",
+      "stem": "r1t-22range",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "r1t-22sport.c0",
+      "size": 24000,
+      "sha": "420f4bc8e1da591f19552c70efc333205a646e13",
+      "stem": "r1t-22sport",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "r1t-22sport.c1",
+      "size": 14504,
+      "sha": "5a4968c80d644f9b17bad3ed1b4f02c7774f6aa5",
+      "stem": "r1t-22sport",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "sierraev-20.c0",
+      "size": 24000,
+      "sha": "ed52b7032e0b2838d978925b2ddcb87013e6f7d4",
+      "stem": "sierraev-20",
+      "idx": 0,
+      "nchunks": 4
+    },
+    {
+      "name": "sierraev-20.c1",
+      "size": 24000,
+      "sha": "63c65eab18e859048f363486d3a2adc72db110c3",
+      "stem": "sierraev-20",
+      "idx": 1,
+      "nchunks": 4
+    },
+    {
+      "name": "sierraev-20.c2",
+      "size": 24000,
+      "sha": "d9dd460d8dff720a420a9b9a5b925db6ae735a99",
+      "stem": "sierraev-20",
+      "idx": 2,
+      "nchunks": 4
+    },
+    {
+      "name": "sierraev-20.c3",
+      "size": 4388,
+      "sha": "4d37b90cbe5b49a270633559191f424e04bafb7a",
+      "stem": "sierraev-20",
+      "idx": 3,
+      "nchunks": 4
+    },
+    {
+      "name": "sierraev-22.c0",
+      "size": 24000,
+      "sha": "25bc06ad411c1c51150191cf589394441d440bae",
+      "stem": "sierraev-22",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "sierraev-22.c1",
+      "size": 14900,
+      "sha": "e6833d9b0ae3924a9745607a1ef643cf08f4a3bf",
+      "stem": "sierraev-22",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "sierraev-24.c0",
+      "size": 24000,
+      "sha": "579854f2e34b2008f299eae5a5920b6d0aea92e6",
+      "stem": "sierraev-24",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "sierraev-24.c1",
+      "size": 11160,
+      "sha": "c1cb659c0f3b143df595e2ab899fe6c20c808145",
+      "stem": "sierraev-24",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "silveradoev-18.c0",
+      "size": 24000,
+      "sha": "ec6c2af014cf60f104f3cfa6a715b78f4b947087",
+      "stem": "silveradoev-18",
+      "idx": 0,
+      "nchunks": 2
+    },
+    {
+      "name": "silveradoev-18.c1",
+      "size": 2012,
+      "sha": "9869615f49c877256d7185fb95e52f4d81aab96b",
+      "stem": "silveradoev-18",
+      "idx": 1,
+      "nchunks": 2
+    },
+    {
+      "name": "silveradoev-20.c0",
+      "size": 19024,
+      "sha": "e51ddaa0e755160ff3c32d7446c29b84786e6bbd",
+      "stem": "silveradoev-20",
+      "idx": 0,
+      "nchunks": 1
+    },
+    {
+      "name": "silveradoev-24.c0",
+      "size": 24000,
+      "sha": "09efcd8767f61c616a8aa0a76a38840c9227022c",
+      "stem": "silveradoev-24",
+      "idx": 0,
+      "nchunks": 3
+    },
+    {
+      "name": "silveradoev-24.c1",
+      "size": 24000,
+      "sha": "1522f1c0cd0bec6eec999469e4a65e3bca16b202",
+      "stem": "silveradoev-24",
+      "idx": 1,
+      "nchunks": 3
+    },
+    {
+      "name": "silveradoev-24.c2",
+      "size": 2888,
+      "sha": "fdecf5da0fbc74bc29caa321c1048dc1fe5a0c3a",
+      "stem": "silveradoev-24",
+      "idx": 2,
+      "nchunks": 3
+    }
+  ],
+  "webp_sha1": {
+    "hummerev-18": "a83ad386394e060571afe6b91533b7d860b75d92",
+    "hummerev-20": "fb6a39ebdf6931f9022e3e43e4f82286904480df",
+    "hummerev-22": "f85233dc073622e6f26469ef0959a46a1beff530",
+    "lightning-18": "f9f5e58755d1440492b53071e7014f4abcebfbba",
+    "lightning-20": "45ab54d13c487c21e96626a534099bb81657a5bd",
+    "lightning-22": "2f1070e09a11e80aaabccf04fa948ae737c290f6",
+    "r1t-20at": "c3b948485b08a869db57d9e6677f14276889353e",
+    "r1t-21": "9f83e639e6eb7990798a5da23e33847bce86fdea",
+    "r1t-22range": "ab93cc8025b560a7f18d779a3f5510faf0535a31",
+    "r1t-22sport": "5ea8afb45c9d91e4953740cab6eb565a37db6340",
+    "sierraev-20": "f1ed7df6d6dafdcfa5d3ccc3f76afb4dde4c9001",
+    "sierraev-22": "95e786b57a7d2ff5e0fe7c55e967e37f5c458365",
+    "sierraev-24": "7db03a0def22822742e81c8112d2ce9b40b1221b",
+    "silveradoev-18": "118c55b7f28f25052cbf4524f2b77e264d759a9d",
+    "silveradoev-20": "bb03fb5e536404ce6230ac12780cf82397334399",
+    "silveradoev-24": "0c8ecb30b8cb7911575d378fb73720da823e2c6c"
+  },
+  "patched_js_size": 148009
+}
