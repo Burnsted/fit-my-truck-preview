@@ -1,0 +1,65 @@
+name: Fix assembler JS chunks
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/_asm/fixes.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fix-asm-chunks
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply byte patches and verify git blob SHAs
+        run: |
+          python3 << 'PY'
+          import json, hashlib
+          from pathlib import Path
+          fixes = json.loads(Path("assets/_asm/fixes.json").read_text())
+          for fix in fixes:
+              p = Path("assets/_asm") / fix["path"]
+              b = bytearray(p.read_bytes())
+              for op in fix["ops"]:
+                  kind = op["op"]
+                  if kind == "replace":
+                      off = op["offset"]
+                      old = op["old"].encode("ascii")
+                      new = op["new"].encode("ascii")
+                      got = bytes(b[off:off+len(old)])
+                      if got != old:
+                          raise SystemExit(f"{p} replace @{off}: got {got!r} want {old!r}")
+                      b[off:off+len(old)] = new
+                  elif kind == "delete":
+                      off = op["offset"]
+                      n = op["length"]
+                      del b[off:off+n]
+                  elif kind == "truncate":
+                      b = bytearray(bytes(b)[:op["length"]])
+                  else:
+                      raise SystemExit(f"unknown op {kind}")
+              data = bytes(b)
+              sha = hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+              if sha != fix["expected_sha"]:
+                  raise SystemExit(f"{p} sha {sha} != {fix['expected_sha']}")
+              p.write_bytes(data)
+              print(f"fixed {p} sha={sha} size={len(data)}")
+          PY
+      - name: Commit fixed chunks
+        run: |
+          git config user.name "Burnsted"
+          git config user.email "coachted14@gmail.com"
+          git add 'assets/_asm/p0.c0' 'assets/_asm/p0.c1' 'assets/_asm/p0.c2' 'assets/_asm/p0.c3' 'assets/_asm/p1.c0' 'assets/_asm/p1.c1' 'assets/_asm/p1.c2' 'assets/_asm/p1.c3' 'assets/_asm/p2.c0' 'assets/_asm/p2.c1' 'assets/_asm/p2.c2' 'assets/_asm/p2.c3' 'assets/_asm/p3.c0' 'assets/_asm/p3.c1' 'assets/_asm/p3.c2' 'assets/_asm/p3.c3' 'assets/_asm/p4.c0' 'assets/_asm/p4.c1' 'assets/_asm/p4.c2' 'assets/_asm/p4.c3' 'assets/_asm/p5.c0' 'assets/_asm/p5.c1' 'assets/_asm/p5.c2' 'assets/_asm/p5.c3' 'assets/_asm/p6.c0' 'assets/_asm/p6.c1' 'assets/_asm/p6.c2' 'assets/_asm/p6.c3' 'assets/_asm/p7.c0' 'assets/_asm/p7.c1' 'assets/_asm/p7.c2' 'assets/_asm/p7.c3' 'assets/_asm/p8.c0' 'assets/_asm/p8.c1' 'assets/_asm/p8.c2' 'assets/_asm/p8.c3' 'assets/_asm/p9.c0' 'assets/_asm/p9.c1' 'assets/_asm/p9.c2' 'assets/_asm/p9.c3' 'assets/_asm/p10.c0' 'assets/_asm/p10.c1' 'assets/_asm/p10.c2' 'assets/_asm/p10.c3' 'assets/_asm/p11.c0' 'assets/_asm/p11.c1' 'assets/_asm/p11.c2' 'assets/_asm/p11.c3' 'assets/_asm/p12.c0' 'assets/_asm/p12.c1' 'assets/_asm/p12.c2' 'assets/_asm/p12.c3' 'assets/_asm/p13.c0' 'assets/_asm/p13.c1' 'assets/_asm/p13.c2' 'assets/_asm/p13.c3' 'assets/_asm/p14.c0' 'assets/_asm/p14.c1' 'assets/_asm/p14.c2' 'assets/_asm/p14.c3' 'assets/_asm/p15.c0' 'assets/_asm/p15.c1' 'assets/_asm/p15.c2' 'assets/_asm/p15.c3' 'assets/_asm/p16.c0' 'assets/_asm/p16.c1' 'assets/_asm/p16.c2' 'assets/_asm/p16.c3' 'assets/_asm/p17.c0' 'assets/_asm/p17.c1' 'assets/_asm/p17.c2' 'assets/_asm/p17.c3' || true
+          if git diff --cached --quiet; then
+            echo "no chunk changes"
+          else
+            git commit -m "Apply assembler chunk byte fixes"
+            git push origin HEAD:main
+          fi

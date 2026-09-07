@@ -1,0 +1,10 @@
+[
+  {
+    "path": "p1.c1",
+    "expected_sha": "f8ee7070c7b9d912a4d0428e752df4127ad5ac92",
+    "ops": [
+      {"op": "truncate", "length": 20000},
+      {"op": "replace", "offset": 18647, "old": "l", "new": "r"}
+    ]
+  }
+]
