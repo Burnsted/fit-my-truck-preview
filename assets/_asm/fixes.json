@@ -11,7 +11,8 @@
     "path": "p1.c2.s0",
     "expected_sha": "3e4bb28cb4e898ccb88c2681a14ebd34e6e07288",
     "ops": [
-      {"op": "replace", "offset": 1941, "old": "s", "new": "S"}
+      {"op": "replace", "offset": 1941, "old": "s", "new": "S"},
+      {"op": "replace", "offset": 4214, "old": "p", "new": "v"}
     ]
   }
 ]
