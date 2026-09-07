@@ -43,5 +43,12 @@
     "ops": [
       {"op": "replace", "offset": 4203, "old": "z", "new": "v"}
     ]
+  },
+  {
+    "path": "p3.c0.s3",
+    "expected_sha": "bcfbe1e6f913d231d59c19b6ecf46aa1271825e2",
+    "ops": [
+      {"op": "delete", "offset": 2953, "length": 2}
+    ]
   }
 ]
