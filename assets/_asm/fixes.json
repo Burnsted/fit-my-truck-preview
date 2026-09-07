@@ -29,5 +29,12 @@
     "ops": [
       {"op": "replace", "offset": 1389, "old": "a", "new": "q"}
     ]
+  },
+  {
+    "path": "p1.c3.s1",
+    "expected_sha": "83efc62e7eaff04ef98d5484b3c9d6d5e9d6610d",
+    "ops": [
+      {"op": "replace", "offset": 2525, "old": "p", "new": "v"}
+    ]
   }
 ]
