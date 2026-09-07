@@ -22,5 +22,12 @@
       {"op": "replace", "offset": 1238, "old": "p", "new": "v"},
       {"op": "replace", "offset": 1909, "old": "p", "new": "v"}
     ]
+  },
+  {
+    "path": "p1.c2.s3",
+    "expected_sha": "69653e533c079818dd18037d5729a4c66663b483",
+    "ops": [
+      {"op": "replace", "offset": 1389, "old": "a", "new": "q"}
+    ]
   }
 ]
