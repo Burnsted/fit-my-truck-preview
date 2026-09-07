@@ -121,5 +121,12 @@
     "ops": [
       {"op": "replace", "offset": 3982, "old": "r", "new": "n"}
     ]
+  },
+  {
+    "path": "p6.c0.s1",
+    "expected_sha": "56c6ed1d7f5ea19ae32fbecf5e74ece513e0b7b5",
+    "ops": [
+      {"op": "replace", "offset": 4909, "old": "p", "new": "v"}
+    ]
   }
 ]
