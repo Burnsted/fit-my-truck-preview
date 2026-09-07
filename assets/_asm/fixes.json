@@ -93,5 +93,12 @@
       {"op": "replace", "offset": 2942, "old": "p", "new": "v"},
       {"op": "replace", "offset": 3206, "old": "sc", "new": "iy"}
     ]
+  },
+  {
+    "path": "p4.c1.s3",
+    "expected_sha": "1c7abbc731acdf2244bad214e7d2d212c1278ae3",
+    "ops": [
+      {"op": "replace", "offset": 4944, "old": "p", "new": "v"}
+    ]
   }
 ]
