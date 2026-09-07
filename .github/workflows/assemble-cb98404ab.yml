@@ -1,0 +1,125 @@
+name: Assemble cb98404ab JS parts
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/_fix/**"
+      - "assets/_hex/**"
+      - ".github/workflows/assemble-cb98404ab.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: assemble-cb98404ab
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch substitutions and assemble hex parts
+        run: |
+          python3 << 'PY'
+          import json, hashlib, pathlib
+
+          def blob_sha(data: bytes) -> str:
+              return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+          assets = pathlib.Path("assets")
+          fix = assets / "_fix"
+          hexdir = assets / "_hex"
+          expected = json.loads((fix / "expected_blobs.json").read_text())
+          stem = expected["stem"]
+          want = expected["blobs"]
+          hex_parts = ["3", "9", "12", "13", "15", "16", "30", "32", "34", "37", "38", "39", "40", "41", "45", "46"]
+          hex_blobs = {}
+          hb = fix / "hex_blobs.json"
+          if hb.exists():
+              hex_blobs = json.loads(hb.read_text())
+
+          changed = []
+
+          pp = fix / "patches.json"
+          if pp.exists():
+              patches = json.loads(pp.read_text())
+              for part, meta in patches["patches"].items():
+                  path = assets / f"{stem}.part{part}"
+                  if not path.exists():
+                      print("missing for patch", part)
+                      continue
+                  data = bytearray(path.read_bytes())
+                  ok = True
+                  for off, ch in meta["diffs"]:
+                      if off >= len(data):
+                          print("patch OOB", part, off, "len", len(data))
+                          ok = False
+                          break
+                      data[off] = ord(ch)
+                  if not ok:
+                      continue
+                  data = bytes(data)
+                  sha = blob_sha(data)
+                  if sha != want[part]:
+                      print("patch sha mismatch", part, sha, "want", want[part], "size", len(data))
+                      continue
+                  path.write_bytes(data)
+                  print("patched", part, sha)
+                  changed.append(part)
+
+          if hexdir.exists():
+              for part in hex_parts:
+                  chunks = list(hexdir.glob(f"p{part}.c*"))
+                  if not chunks:
+                      print("no hex for", part)
+                      continue
+                  chunks.sort(key=lambda p: int(p.name.split(".c", 1)[1]))
+                  buf = bytearray()
+                  bad = False
+                  for c in chunks:
+                      stored = c.read_bytes()
+                      text = stored.decode("ascii").strip().lower()
+                      want_blob = hex_blobs.get(c.name)
+                      if want_blob:
+                          got = blob_sha(stored)
+                          got2 = blob_sha(text.encode("ascii"))
+                          if got != want_blob and got2 != want_blob:
+                              print("hex chunk blob mismatch", c.name, got, got2, "want", want_blob)
+                              bad = True
+                              break
+                      try:
+                          buf.extend(bytes.fromhex(text))
+                      except ValueError as e:
+                          print("hex decode fail", c.name, e)
+                          bad = True
+                          break
+                  if bad:
+                      continue
+                  data = bytes(buf)
+                  sha = blob_sha(data)
+                  if sha != want[part]:
+                      print("hex part mismatch", part, sha, "want", want[part], "size", len(data))
+                      continue
+                  dest = assets / f"{stem}.part{part}"
+                  dest.write_bytes(data)
+                  print("hex assembled", part, sha, len(data))
+                  changed.append(part)
+
+          print("changed", ",".join(changed) if changed else "none")
+          PY
+      - name: Commit verified JS parts only
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          git add assets/index-cb98404ab.part*
+          if git diff --cached --quiet; then
+            echo "no part changes"
+          else
+            git commit -m "Assemble exact index-cb98404ab JS parts from patches and hex"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

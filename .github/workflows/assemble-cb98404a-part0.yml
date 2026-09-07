@@ -1,46 +1,10 @@
-name: Assemble cb98404a part0
+name: Assemble cb98404a part0 (disabled)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "assets/_asm/p0.tail"
-      - "assets/_asm/ASSEMBLE_CB_PART0"
-      - ".github/workflows/assemble-cb98404a-part0.yml"
-
-permissions:
-  contents: write
-
-concurrency:
-  group: assemble-cb98404a-part0
-  cancel-in-progress: false
 
 jobs:
-  assemble:
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Concatenate verified chunks into part0
-        run: |
-          set -euo pipefail
-          git config user.name "Burnsted"
-          git config user.email "coachted14@gmail.com"
-          out="assets/index-cb98404a.part0"
-          cat assets/_asm/p0.c0 assets/_asm/p0.c1 assets/_asm/p0.c2 assets/_asm/p0.c3 assets/_asm/p0.tail > "$out"
-          actual=$(wc -c < "$out")
-          echo "part0 size=$actual"
-          test "$actual" -eq 81920
-          python3 - << 'PY'
-          import hashlib, pathlib
-          d = pathlib.Path("assets/index-cb98404a.part0").read_bytes()
-          sha = hashlib.sha1(b"blob %d\0" % len(d) + d).hexdigest()
-          print(sha)
-          assert sha == "c42fddaadb2173eca50ea7b174cfadf22f368e13", sha
-          PY
-          git add "$out"
-          if git diff --cached --quiet -- "$out"; then
-            echo "part0 already exact"
-          else
-            git commit -m "Add inlined-photo preview JS part 0 for 1c92c2b7"
-            git push origin HEAD:main
-          fi
+      - run: echo "disabled; do not assemble from slices"

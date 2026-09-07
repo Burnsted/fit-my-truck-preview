@@ -1,106 +1,10 @@
-name: Assemble cb98404a JS parts
+name: Assemble cb98404a JS parts (disabled)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "assets/_asm/ASSEMBLE_CB"
-      - ".github/workflows/assemble-cb98404a-parts.yml"
-
-permissions:
-  contents: write
-
-concurrency:
-  group: assemble-cb98404a-parts
-  cancel-in-progress: false
 
 jobs:
-  assemble:
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Concatenate verified chunks/slices into JS parts
-        run: |
-          set -euo pipefail
-          git config user.name "Burnsted"
-          git config user.email "coachted14@gmail.com"
-          python3 << 'PY'
-          import hashlib, pathlib
-          root = pathlib.Path("assets/_asm/cb")
-          expected = {
-            1: ("4f76d7ac1ea3880adde75bbf3056bc664dba4494", 81920),
-            2: ("aa233aafbc76ab764925ae26475ad910e40b8414", 81920),
-            3: ("965506b8ed1f48032f19531dc257ee9eb1fe0e93", 81920),
-            4: ("8c512ac7cdd9903b1b4ddd4a1762784d6e8995cd", 81920),
-            5: ("a30f0534e154093c00bdd4b4cae0495facb5ec99", 81920),
-            6: ("bb2b12793fb6effb4d5d0fd399682870d7741bb4", 81920),
-            7: ("00e2b94c92a4cd7831404d62d726cffd2e5f4762", 81920),
-            8: ("ee13e6c6e82246d569e75887c348b7d7d3d0887f", 81920),
-            9: ("c62949ac0edff1cca591d7e11195c85a29e304fd", 81920),
-            10: ("92e052f2137162371fa30b5c1c26a719f1c218aa", 81920),
-            11: ("234e377cbdf96c1cb47205b6e4fe269119bc48c6", 81920),
-            12: ("e625018cbe07106c426c32d7fc7343191eea0bc9", 81920),
-            13: ("21636cceaee71b9c869b2b72f149de94756d4b71", 81920),
-            14: ("b29a8a50860819f0baccbf369c1c10e9ce644431", 81920),
-            15: ("04b1e2cc79dec84d4a664ca87209aedfe2736fd7", 81920),
-            16: ("63b8e7a94d6b6477b5613f379197cb35c0483362", 81920),
-            17: ("85857492769fbc6009c77e66ca833e4f12af6d3d", 30382),
-          }
-          def blob_sha(data):
-              return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
-          def numbered(name, prefix):
-              if not name.startswith(prefix):
-                  return None
-              rest = name[len(prefix):]
-              return int(rest) if rest.isdigit() else None
-          made = []
-          files = list(root.iterdir()) if root.exists() else []
-          for i, (want_sha, want_size) in expected.items():
-              groups = []
-              chunks = []
-              for p in files:
-                  n = numbered(p.name, "p%d.c" % i)
-                  if n is not None:
-                      chunks.append((n, p))
-              if chunks:
-                  chunks.sort()
-                  groups.append(("chunks", b"".join(p.read_bytes() for _, p in chunks)))
-              slices = []
-              for p in files:
-                  n = numbered(p.name, "p%d.s" % i)
-                  if n is not None:
-                      slices.append((n, p))
-              if slices:
-                  slices.sort()
-                  groups.append(("slices", b"".join(p.read_bytes() for _, p in slices)))
-              chosen = None
-              src = None
-              for label, data in groups:
-                  if len(data) == want_size and blob_sha(data) == want_sha:
-                      chosen = data
-                      src = label
-                      break
-              if chosen is None:
-                  detail = ", ".join("%s=%d" % (label, len(data)) for label, data in groups) or "none"
-                  print("skip part%d: no matching group (%s)" % (i, detail))
-                  continue
-              out = pathlib.Path("assets/index-cb98404a.part%d" % i)
-              out.write_bytes(chosen)
-              print("ok part%d sha=%s size=%d %s" % (i, want_sha, want_size, src))
-              made.append(i)
-          open("/tmp/made.txt","w").write("\n".join(str(x) for x in made))
-          PY
-          if [ ! -s /tmp/made.txt ]; then
-            echo "no complete parts"
-            exit 0
-          fi
-          while read -r i; do
-            [ -n "$i" ] || continue
-            git add "assets/index-cb98404a.part${i}"
-            if git diff --cached --quiet -- "assets/index-cb98404a.part${i}"; then
-              echo "part$i already exact"
-            else
-              git commit -m "Add inlined-photo JS part ${i} (index-cb98404a) from 1c92c2b7"
-            fi
-          done < /tmp/made.txt
-          git push origin HEAD:main || echo "nothing to push"
+      - run: echo "disabled; do not assemble 80KB parts from 2KB slices"
