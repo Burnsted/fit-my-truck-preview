@@ -7,7 +7,7 @@
           "react": "https://esm.sh/react@19.2.8",
           "react/jsx-runtime": "https://esm.sh/react@19.2.8/jsx-runtime",
           "react/jsx-dev-runtime": "https://esm.sh/react@19.2.8/jsx-dev-runtime",
-          "react-dom": "https://esm.sh/react-dom@19.2.8",
+          "react-dom": "https://esm.sh/react@19.2.8",
           "react-dom/client": "https://esm.sh/react-dom@19.2.8/client",
           "leaflet": "https://esm.sh/leaflet@1.9.4",
           "leaflet/dist/leaflet.css": "https://esm.sh/leaflet@1.9.4/dist/leaflet.css"
@@ -20,8 +20,27 @@
     <meta name="theme-color" content="#0f2a24" />
     <title>Fit My Truck</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-    <script type="module" crossorigin src="./assets/index-By7Hc9Qe.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DsKecyKz.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-Ci5ksjZr.css">
+    <script type="module">
+      const parts = [
+        "./assets/index-m-XD0VCA.part0",
+        "./assets/index-m-XD0VCA.part1",
+        "./assets/index-m-XD0VCA.part2",
+        "./assets/index-m-XD0VCA.part3",
+        "./assets/index-m-XD0VCA.part4",
+        "./assets/index-m-XD0VCA.part5",
+        "./assets/index-m-XD0VCA.part6",
+        "./assets/index-m-XD0VCA.part7"
+      ];
+      const sources = await Promise.all(
+        parts.map(async (url) => {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error("Failed to load " + url);
+          return response.text();
+        }),
+      );
+      await import(URL.createObjectURL(new Blob(sources, { type: "text/javascript" })));
+    </script>
   </head>
   <body>
     <div id="root"></div>
