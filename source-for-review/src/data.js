@@ -137,3 +137,130 @@ export const VEHICLE_OPTIONS = [
     },
   },
 ];
+
+export const TRADE_VEHICLE_FIT = {
+  landscaping: {
+    silveradoev: 96,
+    sierraev: 90,
+    lightning: 84,
+    hummerev: 68,
+    r1t: 36,
+  },
+};
+
+export function jobFitForTrade(vehicleId, tradeId) {
+  const map = TRADE_VEHICLE_FIT[tradeId];
+  if (!map) return null;
+  const value = map[vehicleId];
+  return Number.isFinite(value) ? value : null;
+}
+
+export function resolveVehiclePhoto(vehicle, year) {
+  if (!vehicle) return vehicle;
+  const clamped = clampVehicleYear(year, vehicle);
+  const shot = vehicle.yearImages?.[clamped];
+  return shot ? { ...vehicle, ...shot, modelYear: clamped } : { ...vehicle, modelYear: clamped };
+}
+
+export function vehicleYearOptions(vehicle) {
+  const first = Number(vehicle?.firstAvailableYear) || 2022;
+  const last = Number(vehicle?.lastAvailableYear) || CURRENT_MODEL_YEAR;
+  const start = Math.min(first, last);
+  const end = Math.max(first, last);
+  const years = [];
+  for (let year = start; year <= end; year += 1) years.push(year);
+  return years;
+}
+
+export function clampVehicleYear(year, vehicle) {
+  const years = vehicleYearOptions(vehicle);
+  const numeric = Number.parseInt(String(year), 10);
+  if (years.includes(numeric)) return numeric;
+  if (!Number.isFinite(numeric)) return years[0];
+  if (numeric < years[0]) return years[0];
+  return years[years.length - 1];
+}
+
+export const SCENE_IMAGES = {
+  workday: {
+    url: "https://images.unsplash.com/photo-1571986929789-95307bbfa7c2?auto=format&fit=crop&w=1400&q=80",
+    alt: "Modern pickup truck parked in open country",
+    credit: "Sergio Rota",
+    license: "Unsplash License",
+    sourceUrl: "https://unsplash.com/photos/parked-black-crew-can-pickup-truck-5saApcjtoaI",
+  },
+  playday: {
+    url: "https://images.unsplash.com/photo-1615383563365-82189c96298d?auto=format&fit=crop&w=1400&q=80",
+    alt: "Pickup truck on a snow-covered forest road",
+    credit: "via Unsplash",
+    license: "Unsplash License",
+    sourceUrl: "https://unsplash.com/photos/black-ford-f-150-on-snow-covered-ground-1sOtjZgKfNg",
+  },
+  fleet: {
+    url: "https://images.unsplash.com/photo-1605152322346-bd2391778772?auto=format&fit=crop&w=1400&q=80",
+    alt: "White pickup truck in front of a dealership at night",
+    credit: "Erik Mclean",
+    license: "Unsplash License",
+    sourceUrl: "https://unsplash.com/photos/white-ford-f-150-crew-cab-pickup-truck-alqcW58zWmc",
+  },
+};
+
+export const VEHICLE_CONFIGS = {
+  r1t: {
+    packs: [{ id: "standard", label: "Standard Pack", rangeMod: -48 }, { id: "large", label: "Large Pack", rangeMod: 0 }, { id: "max", label: "Max Pack", rangeMod: 42 }],
+    motors: [{ id: "dual", label: "Dual Motor", effMod: 0 }, { id: "perfdual", label: "Performance Dual", effMod: -0.03 }, { id: "quad", label: "Quad Motor", effMod: -0.08 }, { id: "tri", label: "Tri Motor", effMod: -0.14 }],
+    wheels: [
+      { id: "21", label: '21" Road', effMod: 0, imageUrl: wheelShot("r1t", "21", '21" Road') },
+      { id: "22range", label: '22" Range', effMod: -0.02, imageUrl: wheelShot("r1t", "22range", '22" Range') },
+      { id: "22sport", label: '22" Sport', effMod: -0.05, imageUrl: wheelShot("r1t", "22sport", '22" Sport') },
+      { id: "20at", label: '20" All-Terrain', effMod: -0.12, imageUrl: wheelShot("r1t", "20at", '20" All-Terrain') },
+    ],
+    recommended: { pack: "large", motor: "dual", wheel: "21" },
+  },
+  lightning: {
+    packs: [{ id: "standard", label: "Standard Range", rangeMod: -90 }, { id: "extended", label: "Extended Range", rangeMod: 0 }],
+    motors: [{ id: "dual", label: "Dual Motor", effMod: 0 }],
+    wheels: [
+      { id: "18", label: '18" All-Terrain', effMod: 0, imageUrl: wheelShot("lightning", "18", '18" All-Terrain') },
+      { id: "20", label: '20" Chrome', effMod: -0.03, imageUrl: wheelShot("lightning", "20", '20" Chrome') },
+      { id: "22", label: '22" Premium', effMod: -0.06, imageUrl: wheelShot("lightning", "22", '22" Premium') },
+    ],
+    recommended: { pack: "extended", motor: "dual", wheel: "18" },
+  },
+  silveradoev: {
+    packs: [{ id: "wt", label: "WT Max Range", rangeMod: 0 }, { id: "rst", label: "RST Performance", rangeMod: -60 }],
+    motors: [{ id: "dual", label: "Dual Motor AWD", effMod: 0 }],
+    wheels: [
+      { id: "18", label: '18" Fleet', effMod: 0, imageUrl: wheelShot("silveradoev", "18", '18" Fleet') },
+      { id: "20", label: '20" All-Terrain', effMod: -0.03, imageUrl: wheelShot("silveradoev", "20", '20" All-Terrain') },
+      { id: "24", label: '24" Premium', effMod: -0.08, imageUrl: wheelShot("silveradoev", "24", '24" Premium') },
+    ],
+    recommended: { pack: "wt", motor: "dual", wheel: "18" },
+  },
+  sierraev: {
+    packs: [{ id: "elevation", label: "Elevation", rangeMod: 0 }, { id: "denali", label: "Denali Edition 1", rangeMod: -50 }],
+    motors: [{ id: "dual", label: "Dual Motor AWD", effMod: 0 }],
+    wheels: [
+      { id: "20", label: '20" All-Terrain', effMod: 0, imageUrl: wheelShot("sierraev", "20", '20" All-Terrain') },
+      { id: "22", label: '22" Premium', effMod: -0.04, imageUrl: wheelShot("sierraev", "22", '22" Premium') },
+      { id: "24", label: '24" Chrome', effMod: -0.07, imageUrl: wheelShot("sierraev", "24", '24" Chrome') },
+    ],
+    recommended: { pack: "elevation", motor: "dual", wheel: "20" },
+  },
+  hummerev: {
+    packs: [{ id: "standard", label: "Standard Pack", rangeMod: 0 }],
+    motors: [{ id: "2x", label: "2X Dual Motor", effMod: 0 }, { id: "3x", label: "3X Tri Motor", effMod: -0.10 }],
+    wheels: [
+      { id: "18", label: '18" All-Terrain', effMod: 0, imageUrl: wheelShot("hummerev", "18", '18" All-Terrain') },
+      { id: "20", label: '20" Off-Road', effMod: -0.03, imageUrl: wheelShot("hummerev", "20", '20" Off-Road') },
+      { id: "22", label: '22" Extreme', effMod: -0.06, imageUrl: wheelShot("hummerev", "22", '22" Extreme') },
+    ],
+    recommended: { pack: "standard", motor: "2x", wheel: "18" },
+  },
+};
+
+export const CHARGERS = [
+  { brand: "ChargePoint", model: "Home Flex", amps: "up to 50A", note: "Adjustable amperage, widely reviewed" },
+  { brand: "Emporia", model: "Level 2", amps: "up to 48A", note: "Whole-home energy monitoring built in" },
+  { brand: "Grizzl-E", model: "Classic", amps: "up to 40A", note: "Rugged, budget-friendly, strong reliability record" },
+];
