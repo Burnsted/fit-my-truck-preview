@@ -1,36 +1,10 @@
-name: Split Play Day preview JS parts
+name: Split Play Day preview JS parts (disabled)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "assets/_src/**"
-      - ".github/workflows/split-playday.yml"
-
-permissions:
-  contents: write
-
-concurrency:
-  group: split-playday
-  cancel-in-progress: false
 
 jobs:
-  split:
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Split JS parts and flip live HTML
-        run: python3 assets/_src/materialize.py
-      - name: Commit split parts and HTML
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/index-CE6fUd-V.part* assets/index-DRm4TlEf.css index.html 404.html README.md
-          if git diff --cached --quiet; then
-            echo "parts already current"
-          else
-            git commit -m "Materialize Play Day PR14 JS parts (index-CE6fUd-V)"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+      - run: echo "disabled; Map My Day preview uses assemble-mapmyday.yml"
