@@ -1,0 +1,8 @@
+{
+  "appId": "com.burnsted.fitmytruck",
+  "appName": "Fit My Truck",
+  "webDir": "dist",
+  "android": {
+    "path": "android"
+  }
+}
