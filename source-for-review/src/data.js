@@ -9,3 +9,17 @@ export const COMMONS_FILEPATH = "https://commons.wikimedia.org/wiki/Special:File
 export function commonsFileName(file) {
   return String(file || "").replace(/^File:/i, "").replace(/ /g, "_");
 }
+
+export function commonsFilePath(file, width) {
+  const name = commonsFileName(file);
+  const url = `${COMMONS_FILEPATH}${encodeURIComponent(name)}`;
+  return width ? `${url}?width=${width}` : url;
+}
+
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
