@@ -34,4 +34,4 @@ Do not treat this as a merge review of PR #14. The private app repo is unchanged
 
 Omitted on purpose: `node_modules/`, `android/`, lockfiles, and large binary images under `public/`.
 
-`SOURCE_BUNDLE.md` is the same files concatenated into one document if you want a single paste.
+`SOURCE_BUNDLE_01.md` through `SOURCE_BUNDLE_04.md` are the same files concatenated into ordered parts if you want a single paste. If `src/data.js` looks short, read `src/data.part-1-of-3.js` + `src/data.part-2-of-3.js` + `src/data.part-3-of-3.js` in order (that is the complete original module).
