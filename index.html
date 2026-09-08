@@ -14,43 +14,24 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta
-      name="description"
-      content="Fit My Truck helps contractors and service fleets compare truck capability, range, towing, payload, charging, and operating cost."
-    />
+    <meta name="description" content="Fit My Truck helps contractors and service fleets compare truck capability, range, towing, payload, charging, and operating cost." />
     <meta name="theme-color" content="#0f2a24" />
     <title>Fit My Truck</title>
-    <link rel="stylesheet" crossorigin href="./assets/index-BAhbdKQW.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-DRm4TlEf.css">
     <script type="module">
       const parts = [
-        "./assets/index-BXAnjkA5.part0",
-        "./assets/index-BXAnjkA5.part1",
-        "./assets/index-BXAnjkA5.part2",
-        "./assets/index-BXAnjkA5.part3",
-        "./assets/index-BXAnjkA5.part4",
-        "./assets/index-BXAnjkA5.part5",
-        "./assets/index-BXAnjkA5.part6",
-        "./assets/index-BXAnjkA5.part7",
-        "./assets/index-BXAnjkA5.part8",
-        "./assets/index-BXAnjkA5.part9",
-        "./assets/index-BXAnjkA5.part10",
-        "./assets/index-BXAnjkA5.part11",
-        "./assets/index-BXAnjkA5.part12",
-        "./assets/index-BXAnjkA5.part13",
-        "./assets/index-BXAnjkA5.part14",
-        "./assets/index-BXAnjkA5.part15",
-        "./assets/index-BXAnjkA5.part16",
-        "./assets/index-BXAnjkA5.part17",
-        "./assets/index-BXAnjkA5.part18",
-        "./assets/index-BXAnjkA5.part19",
-        "./assets/index-BXAnjkA5.part20",
-        "./assets/index-BXAnjkA5.part21",
-        "./assets/index-BXAnjkA5.part22"
+        "./assets/index-CE6fUd-V.part0",
+        "./assets/index-CE6fUd-V.part1",
+        "./assets/index-CE6fUd-V.part2",
+        "./assets/index-CE6fUd-V.part3",
+        "./assets/index-CE6fUd-V.part4",
+        "./assets/index-CE6fUd-V.part5",
+        "./assets/index-CE6fUd-V.part6"
       ];
       const sources = await Promise.all(
         parts.map(async (url) => {
           const response = await fetch(url);
-          if (!response.ok) throw new Error(`Failed to load ${url}`);
+          if (!response.ok) throw new Error("Failed to load " + url);
           return response.text();
         }),
       );
