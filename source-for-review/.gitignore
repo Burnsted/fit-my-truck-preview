@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-preview/
+.netlify/
+.vite/
+.pnpm-store/
+tmp-photos/
+
+*.log
+.DS_Store
+
+# Android / Play signing — never commit keystores or local SDK paths
+*.jks
+*.keystore
+android/keystore.properties
+android/local.properties
