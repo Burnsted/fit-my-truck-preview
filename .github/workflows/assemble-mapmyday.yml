@@ -1,0 +1,44 @@
+name: Assemble Map My Day preview
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/_src/index-By7Hc9Qe.part*"
+      - ".github/workflows/assemble-mapmyday.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Concatenate JS parts
+        run: |
+          python3 << 'PY'
+          from pathlib import Path
+          src = Path("assets/_src")
+          parts = sorted(src.glob("index-By7Hc9Qe.part*"), key=lambda p: int(p.name.split("part")[-1]))
+          if len(parts) < 8:
+              raise SystemExit(f"expected 8 parts, got {len(parts)} {[p.name for p in parts]}")
+          data = b"".join(p.read_bytes() for p in parts)
+          dest = Path("assets/index-By7Hc9Qe.js")
+          dest.parent.mkdir(parents=True, exist_ok=True)
+          dest.write_bytes(data)
+          print("wrote", dest, len(data), "from", [p.name for p in parts])
+          PY
+      - name: Commit assembled JS
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/index-By7Hc9Qe.js
+          if git diff --cached --quiet; then
+            echo "assembled JS already current"
+          else
+            git commit -m "Assemble Map My Day preview JS (index-By7Hc9Qe)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
