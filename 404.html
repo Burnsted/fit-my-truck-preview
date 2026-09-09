@@ -7,7 +7,7 @@
           "react": "https://esm.sh/react@19.2.8",
           "react/jsx-runtime": "https://esm.sh/react@19.2.8/jsx-runtime",
           "react/jsx-dev-runtime": "https://esm.sh/react@19.2.8/jsx-dev-runtime",
-          "react-dom": "https://esm.sh/react-dom@19.2.8",
+          "react-dom": "https://esm.sh/react@19.2.8",
           "react-dom/client": "https://esm.sh/react-dom@19.2.8/client",
           "leaflet": "https://esm.sh/leaflet@1.9.4"
         }
@@ -19,26 +19,25 @@
     <meta name="theme-color" content="#0f2a24" />
     <title>Fit My Truck</title>
     <link id="fit-my-truck-leaflet-css" rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
-    <link rel="stylesheet" crossorigin href="./assets/index-CnbrZJUf.css">
     <script type="module">
-      const parts = [
-        "./assets/index-BUGSwYTs.part0",
-        "./assets/index-BUGSwYTs.part1",
-        "./assets/index-BUGSwYTs.part2",
-        "./assets/index-BUGSwYTs.part3",
-        "./assets/index-BUGSwYTs.part4",
-        "./assets/index-BUGSwYTs.part5",
-        "./assets/index-BUGSwYTs.part6",
-        "./assets/index-ClT_WDFC.part7"
-      ];
-      const sources = await Promise.all(
-        parts.map(async (url) => {
+      const cssParts = ['./assets/index-wragn7eS.part0', './assets/index-wragn7eS.part1', './assets/index-wragn7eS.part2'];
+      const jsParts = ['./assets/index-BUGSwYTs.part0', './assets/index-BUGSwYTs.part1', './assets/index-BUGSwYTs.part2', './assets/index-BUGSwYTs.part3', './assets/index-BUGSwYTs.part4', './assets/index-BUGSwYTs.part5', './assets/index-iZkcidFq.part6', './assets/index-iZkcidFq.part7', './assets/index-iZkcidFq.part8', './assets/index-iZkcidFq.part9', './assets/index-iZkcidFq.part10'];
+      const [cssSources, jsSources] = await Promise.all([
+        Promise.all(cssParts.map(async (url) => {
           const response = await fetch(url);
           if (!response.ok) throw new Error("Failed to load " + url);
           return response.text();
-        }),
-      );
-      await import(URL.createObjectURL(new Blob(sources, { type: "text/javascript" })));
+        })),
+        Promise.all(jsParts.map(async (url) => {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error("Failed to load " + url);
+          return response.text();
+        })),
+      ]);
+      const style = document.createElement("style");
+      style.textContent = cssSources.join("");
+      document.head.appendChild(style);
+      await import(URL.createObjectURL(new Blob(jsSources, { type: "text/javascript" })));
     </script>
   </head>
   <body>
