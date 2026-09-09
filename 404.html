@@ -20,18 +20,14 @@
     <meta name="theme-color" content="#0f2a24" />
     <title>Fit My Truck</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-    <link rel="stylesheet" crossorigin href="./assets/index-Ci5ksjZr.part0.css">
-    <link rel="stylesheet" crossorigin href="./assets/index-Ci5ksjZr.part1.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-Ci5ksjZr.css">
     <script type="module">
       const parts = [
-        "./assets/index-m-XD0VCA.part0",
-        "./assets/index-m-XD0VCA.part1",
-        "./assets/index-m-XD0VCA.part2",
-        "./assets/index-m-XD0VCA.part3",
-        "./assets/index-m-XD0VCA.part4",
-        "./assets/index-m-XD0VCA.part5",
-        "./assets/index-m-XD0VCA.part6",
-        "./assets/index-m-XD0VCA.part7"
+        "./assets/index-D_wTC6Ra.part0",
+        "./assets/index-D_wTC6Ra.part1",
+        "./assets/index-D_wTC6Ra.part2",
+        "./assets/index-D_wTC6Ra.part3",
+        "./assets/index-D_wTC6Ra.part4"
       ];
       const sources = await Promise.all(
         parts.map(async (url) => {
@@ -40,9 +36,6 @@
           return response.text();
         }),
       );
-      sources[3] = sources[3]
-        .replace("opacity:c?.28:.16", "opacity:c?.5:.38")
-        .replace("linear-gradient(180deg, ${Kt}F2 0%, ${Kt}D9 55%, ${Kt}B8 100%)", "linear-gradient(180deg, ${Kt}A6 0%, ${Kt}88 55%, ${Kt}C4 100%)");
       await import(URL.createObjectURL(new Blob(sources, { type: "text/javascript" })));
     </script>
   </head>
