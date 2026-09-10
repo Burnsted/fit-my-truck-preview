@@ -1,1 +1,1 @@
-PLACEHOLDER_TEST_SIZE
+/tmp/upload_content.js
