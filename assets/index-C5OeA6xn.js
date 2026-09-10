@@ -1,1 +1,1 @@
-@/home/ubuntu/.cursor/projects/workspace/agent-tools/upload_content.txt
+PLACEHOLDER_50K
