@@ -1,1 +1,1 @@
-LOADING
+@file:/tmp/content_assets_index-C5OeA6xn.js
