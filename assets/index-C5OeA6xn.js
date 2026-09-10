@@ -1,1 +1,1 @@
-@/home/ubuntu/.cursor/projects/workspace/agent-tools/spill_invoke_args.json:content
+@/tmp/mcp_upload_args_ready.json:content
