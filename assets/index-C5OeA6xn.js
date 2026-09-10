@@ -1,1 +1,1 @@
-LOAD_FROM:/tmp/stage1_args.json
+LOAD_FROM:/tmp/stage1_mcp_args.json
