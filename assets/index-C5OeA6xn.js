@@ -1,1 +1,1 @@
-LOAD_FROM:/tmp/stage1_live.json
+PLACEHOLDER_WILL_REPLACE
