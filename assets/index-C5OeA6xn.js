@@ -1,1 +1,1 @@
-LOAD_FROM_FILE
+LOAD_FROM:/tmp/stage1_live.json
