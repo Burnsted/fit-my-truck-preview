@@ -1,1 +1,1 @@
-file:///tmp/upload_content.js
+PLACEHOLDER_LOAD_FROM_FILE
