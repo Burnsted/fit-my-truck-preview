@@ -1,1 +1,1 @@
-/tmp/upload_content.js
+$read:/tmp/upload_content.js
