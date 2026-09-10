@@ -1,1 +1,1 @@
-PLACEHOLDER
+LOAD_FROM_FILE:/tmp/stage1_invoke_compact.json
