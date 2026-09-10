@@ -1,1 +1,1 @@
-PLACEHOLDER_50K
+@/tmp/upload_content.js
