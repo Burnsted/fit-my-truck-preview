@@ -1,1 +1,1 @@
-@/tmp/upload_content.js
+file:///tmp/upload_content.js
