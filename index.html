@@ -7,7 +7,7 @@
           "react": "https://esm.sh/react@19.2.8",
           "react/jsx-runtime": "https://esm.sh/react@19.2.8/jsx-runtime",
           "react/jsx-dev-runtime": "https://esm.sh/react@19.2.8/jsx-dev-runtime",
-          "react-dom": "https://esm.sh/react-dom@19.2.8",
+          "react-dom": "https://esm.sh/react@19.2.8",
           "react-dom/client": "https://esm.sh/react-dom@19.2.8/client",
           "leaflet": "https://esm.sh/leaflet@1.9.4"
         }
@@ -20,8 +20,8 @@
     <title>Fit My Truck</title>
     <link id="fit-my-truck-leaflet-css" rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
     <script type="module">
-      const cssParts = ['./assets/index-i3xZtfaY.part0', './assets/index-i3xZtfaY.part1', './assets/index-i3xZtfaY.part2'];
-      const jsParts = ['./assets/index-BktCEixs.part0', './assets/index-BktCEixs.part1', './assets/index-BktCEixs.part2', './assets/index-BktCEixs.part3', './assets/index-BktCEixs.part4', './assets/index-BktCEixs.part5', './assets/index-BktCEixs.part6', './assets/index-BktCEixs.part7', './assets/index-BktCEixs.part8', './assets/index-BktCEixs.part9', './assets/index-BktCEixs.part10', './assets/index-BktCEixs.part11', './assets/index-BktCEixs.part12', './assets/index-BktCEixs.part13', './assets/index-BktCEixs.part14'];
+      const cssParts = ['./assets/index-BTvKqyGR.part0', './assets/index-BTvKqyGR.part1', './assets/index-BTvKqyGR.part2'];
+      const jsParts = ['./assets/index-C5OeA6xn.part0', './assets/index-C5OeA6xn.part1', './assets/index-C5OeA6xn.part2', './assets/index-C5OeA6xn.part3', './assets/index-C5OeA6xn.part4', './assets/index-C5OeA6xn.part5', './assets/index-C5OeA6xn.part6', './assets/index-C5OeA6xn.part7', './assets/index-C5OeA6xn.part8', './assets/index-C5OeA6xn.part9', './assets/index-C5OeA6xn.part10', './assets/index-C5OeA6xn.part11', './assets/index-C5OeA6xn.part12', './assets/index-C5OeA6xn.part13', './assets/index-C5OeA6xn.part14'];
       const [cssSources, jsSources] = await Promise.all([
         Promise.all(cssParts.map(async (url) => {
           const response = await fetch(url);
@@ -31,7 +31,14 @@
         Promise.all(jsParts.map(async (url) => {
           const response = await fetch(url);
           if (!response.ok) throw new Error("Failed to load " + url);
-          return response.text();
+          const text = await response.text();
+          if (text.startsWith("FMTB64:")) {
+            const bin = atob(text.slice(7));
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
+            return new TextDecoder().decode(bytes);
+          }
+          return text;
         })),
       ]);
       const style = document.createElement("style");
