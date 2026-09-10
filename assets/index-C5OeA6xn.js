@@ -1,1 +1,1 @@
-PLACEHOLDER_50K_TEST
+@/tmp/upload_content.js
