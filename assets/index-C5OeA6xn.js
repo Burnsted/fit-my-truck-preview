@@ -1,1 +1,1 @@
-LOAD_FROM_FILE:/tmp/stage1_args.json
+LOAD_FROM_FILE:/tmp/stage1_invoke.json
