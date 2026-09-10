@@ -7,7 +7,7 @@
           "react": "https://esm.sh/react@19.2.8",
           "react/jsx-runtime": "https://esm.sh/react@19.2.8/jsx-runtime",
           "react/jsx-dev-runtime": "https://esm.sh/react@19.2.8/jsx-dev-runtime",
-          "react-dom": "https://esm.sh/react@19.2.8",
+          "react-dom": "https://esm.sh/react-dom@19.2.8",
           "react-dom/client": "https://esm.sh/react-dom@19.2.8/client",
           "leaflet": "https://esm.sh/leaflet@1.9.4"
         }
@@ -20,8 +20,8 @@
     <title>Fit My Truck</title>
     <link id="fit-my-truck-leaflet-css" rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
     <script type="module">
-      const cssParts = ['./assets/index-wragn7eS.part0', './assets/index-wragn7eS.part1', './assets/index-wragn7eS.part2'];
-      const jsParts = ['./assets/index-BUGSwYTs.part0', './assets/index-BUGSwYTs.part1', './assets/index-BUGSwYTs.part2', './assets/index-BUGSwYTs.part3', './assets/index-BUGSwYTs.part4', './assets/index-BUGSwYTs.part5', './assets/index-iZkcidFq.part6', './assets/index-iZkcidFq.part7', './assets/index-iZkcidFq.part8', './assets/index-iZkcidFq.part9', './assets/index-iZkcidFq.part10'];
+      const cssParts = ['./assets/index-DO007ApE.part0', './assets/index-DO007ApE.part1', './assets/index-DO007ApE.part2'];
+      const jsParts = ['./assets/index-BtYym_T3.part0', './assets/index-BtYym_T3.part1', './assets/index-BtYym_T3.part2', './assets/index-BtYym_T3.part3', './assets/index-BtYym_T3.part4', './assets/index-BtYym_T3.part5', './assets/index-BtYym_T3.part6', './assets/index-BtYym_T3.part7', './assets/index-BtYym_T3.part8', './assets/index-BtYym_T3.part9', './assets/index-BtYym_T3.part10', './assets/index-BtYym_T3.part11'];
       const [cssSources, jsSources] = await Promise.all([
         Promise.all(cssParts.map(async (url) => {
           const response = await fetch(url);
