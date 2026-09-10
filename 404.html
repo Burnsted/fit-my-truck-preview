@@ -15,39 +15,19 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Fit My Truck helps contractors and service fleets compare truck capability, range, towing, payload, charging, and operating cost." />
+    <meta
+      name="description"
+      content="Fit My Truck helps contractors and service fleets compare truck capability, range, towing, payload, charging, and operating cost."
+    />
     <meta name="theme-color" content="#0f2a24" />
     <title>Fit My Truck</title>
     <link id="fit-my-truck-leaflet-css" rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
-    <script type="module">
-      const cssParts = ['./assets/index-BTvKqyGR.part0', './assets/index-BTvKqyGR.part1', './assets/index-BTvKqyGR.part2'];
-      const jsParts = ['./assets/index-C5OeA6xn.part0', './assets/index-C5OeA6xn.part1', './assets/index-C5OeA6xn.part2', './assets/index-C5OeA6xn.part3', './assets/index-C5OeA6xn.part4', './assets/index-C5OeA6xn.part5', './assets/index-C5OeA6xn.part6', './assets/index-C5OeA6xn.part7', './assets/index-C5OeA6xn.part8', './assets/index-C5OeA6xn.part9', './assets/index-C5OeA6xn.part10', './assets/index-C5OeA6xn.part11', './assets/index-C5OeA6xn.part12', './assets/index-C5OeA6xn.part13', './assets/index-C5OeA6xn.part14'];
-      const [cssSources, jsSources] = await Promise.all([
-        Promise.all(cssParts.map(async (url) => {
-          const response = await fetch(url);
-          if (!response.ok) throw new Error("Failed to load " + url);
-          return response.text();
-        })),
-        Promise.all(jsParts.map(async (url) => {
-          const response = await fetch(url);
-          if (!response.ok) throw new Error("Failed to load " + url);
-          const text = await response.text();
-          if (text.startsWith("FMTB64:")) {
-            const bin = atob(text.slice(7));
-            const bytes = new Uint8Array(bin.length);
-            for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
-            return new TextDecoder().decode(bytes);
-          }
-          return text;
-        })),
-      ]);
-      const style = document.createElement("style");
-      style.textContent = cssSources.join("");
-      document.head.appendChild(style);
-      await import(URL.createObjectURL(new Blob(jsSources, { type: "text/javascript" })));
-    </script>
+    <script type="module" crossorigin src="./assets/index-C5OeA6xn.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BTvKqyGR.css">
   </head>
   <body>
     <div id="root"></div>
+
   </body>
 </html>
+
