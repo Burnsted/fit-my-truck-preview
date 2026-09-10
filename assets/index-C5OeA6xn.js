@@ -1,1 +1,1 @@
-@/tmp/mcp_upload_args_ready.json:content
+PLACEHOLDER
