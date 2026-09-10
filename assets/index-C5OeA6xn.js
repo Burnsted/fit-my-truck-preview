@@ -1,1 +1,1 @@
-@/home/ubuntu/.cursor/projects/workspace/agent-tools/spill_invoke_args.json:content
+@/tmp/upload_content.js
