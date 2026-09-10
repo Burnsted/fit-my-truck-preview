@@ -1,1 +1,1 @@
-@file:/tmp/content_assets_index-C5OeA6xn.js
+import{StrictMode as e}from"react";import{createRoot as t}from"react-dom/client";import{jsx as n,jsxs as r,Fragment as i}from"react/jsx-runtime";function a(){return null}t(document.getElementById("root")).render(n(e,{children:n(a,{})}));
