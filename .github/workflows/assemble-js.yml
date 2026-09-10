@@ -14,10 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate JS parts
+      - name: Concatenate JS chunks
         run: |
-          cat assets/_js_upload/part{0..10} > assets/index-C5OeA6xn.js
+          cat assets/_js_upload/chunk* > assets/index-C5OeA6xn.js
           echo "Assembled size: $(wc -c < assets/index-C5OeA6xn.js) bytes"
+          head -c 20 assets/index-C5OeA6xn.js; echo
+          tail -c 50 assets/index-C5OeA6xn.js; echo
       - name: Commit assembled bundle
         run: |
           git config user.name "github-actions[bot]"
