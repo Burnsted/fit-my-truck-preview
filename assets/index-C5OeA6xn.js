@@ -1,1 +1,1 @@
-LOAD_FROM:/tmp/stage1_mcp_args.json
+import{StrictMode as e,createElement as t,forwardRef as n,useEffect as r,useId as i,useMemo as a,useRef as o,useState as s}from"react";import{createRoot as c}from"react-dom/client";import{Fragment as l,jsx as u,jsxs as d}from"react/jsx-runtime";(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return;for(let e of document.querySelectorAll(`link[rel="modulepreload"]`))n(e);new MutationObserver(e=>{for(let t of e)if(t.type===`childList`)for(let 
