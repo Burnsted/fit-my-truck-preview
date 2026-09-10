@@ -1,1 +1,1 @@
-file:///tmp/upload_content.js
+@/home/ubuntu/.cursor/projects/workspace/agent-tools/mcp_upload_invoke.json:content
