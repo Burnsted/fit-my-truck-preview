@@ -1,1 +1,1 @@
-PLACEHOLDER_WILL_BE_REPLACED
+file:///tmp/upload_content.js
