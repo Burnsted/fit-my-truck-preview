@@ -1,1 +1,1 @@
-PLACEHOLDER
+@/tmp/upload_content.js
