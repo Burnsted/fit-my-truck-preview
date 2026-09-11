@@ -24,7 +24,7 @@
 /* Live preview JS uses inline colors, not .home-tile-* classes. Map title+sub must match #fff. */
 [data-testid="home-choice-map"] svg,
 [data-testid="home-choice-map"] span,
-[data-testid="home-choice-map"] .text-\\[11px\\] {
+[data-testid="home-choice-map"] .text-\[11px\] {
   color: #ffffff !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.88), 0 0 1px rgba(0, 0, 0, 0.95);
 }
