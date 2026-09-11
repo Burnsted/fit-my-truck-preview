@@ -1,1 +1,1 @@
-PLACEHOLDER
+LOAD_FROM_FILE:/tmp/cum_4.js
