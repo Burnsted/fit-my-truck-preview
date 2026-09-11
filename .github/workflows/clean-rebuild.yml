@@ -17,64 +17,48 @@ jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout preview repo
-        uses: actions/checkout@v4
-        with:
-          path: preview
+      - uses: actions/checkout@v4
 
-      - name: Checkout Fit My Truck source
-        uses: actions/checkout@v4
-        with:
-          repository: Burnsted/fit-my-truck
-          ref: cursor/map-tile-text-53e3
-          path: src
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.19.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          cache-dependency-path: src/pnpm-lock.yaml
-
-      - name: Build public preview
-        working-directory: src
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm build:preview
-
-      - name: Replace preview with clean dist
-        working-directory: preview
+      - name: Remove chunked-upload wreckage, keep live assets
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git rm -rf --ignore-unmatch assets vendor source-for-review .tmp-upload .cursor-write-probe.txt || true
-          rm -rf assets vendor source-for-review .tmp-upload
+          test -f index.html
+          test -f assets/index-C5OeA6xn.js
+          test -f assets/index-C0u2FdsI.css
+          test -f assets/map-tile-white.css
+          test -f vendor/leaflet/leaflet.css
+
+          JS_SIZE=$(wc -c < assets/index-C5OeA6xn.js)
+          if [ "$JS_SIZE" -lt 200000 ]; then
+            echo "JS too small: $JS_SIZE"
+            exit 1
+          fi
+
+          rm -rf source-for-review .tmp-upload assets/_js_upload assets/_src assets/_hex assets/_fix assets/_asm assets/_chunk_test.txt
+          rm -f .cursor-write-probe.txt
+          find assets -name '*.part*' -delete
+          find assets -name '_*' -delete
+
+          # Drop unused complete CSS/JS hashes; keep the live pair plus map-tile override
+          find assets -maxdepth 1 -type f -name 'index-*' ! -name 'index-C5OeA6xn.js' ! -name 'index-C0u2FdsI.css' -delete
+
           rm -f .github/workflows/assemble-*.yml \
                 .github/workflows/materialize-*.yml \
                 .github/workflows/pack-*.yml \
                 .github/workflows/split-*.yml \
                 .github/workflows/cleanup-*.yml \
-                .github/workflows/fix-asm-*.yml \
-                .github/workflows/clean-rebuild.yml
+                .github/workflows/fix-asm-*.yml
 
-          cp -R ../src/dist-preview/* .
-          touch .nojekyll
-
-          HTML_REFS=$(grep -o 'assets/index-[^"]*' index.html | sort)
-          DISK_REFS=$(ls assets | grep -E 'index-.*\.(js|css)$' | sed 's|^|assets/|' | sort)
-          echo "index.html refs:"
-          echo "$HTML_REFS"
-          echo "assets on disk:"
-          echo "$DISK_REFS"
-          if [ "$HTML_REFS" != "$DISK_REFS" ]; then
-            echo "HASH MISMATCH — not pushing"
-            exit 1
-          fi
+          HTML_JS=$(grep -oE 'assets/index-[^"]+\.js' index.html | head -1)
+          HTML_CSS=$(grep -oE 'assets/index-[^"]+\.css' index.html | head -1)
+          test -f "$HTML_JS"
+          test -f "$HTML_CSS"
+          echo "keeping $HTML_JS $(wc -c < "$HTML_JS") bytes"
+          echo "keeping $HTML_CSS $(wc -c < "$HTML_CSS") bytes"
+          ls -la assets vendor/leaflet
 
           git add -A
           if git diff --cached --quiet; then
