@@ -11,15 +11,15 @@
   color: #ffffff !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.88), 0 0 1px rgba(0, 0, 0, 0.95);
 }
-/* Map tile: live bundle uses inline colors on span/.text-[11px]; title+sub must match white */
-[data-testid="home-choice-map"] svg,
-[data-testid="home-choice-map"] span,
-[data-testid="home-choice-map"] .text-\[11px\] {
-  color: #ffffff !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.88), 0 0 1px rgba(0, 0, 0, 0.95);
+[data-testid="home-choice-map"] .home-tile-title,
+[data-testid="home-choice-map"] .home-tile-icon,
+[data-testid="home-choice-fleet"] .home-tile-title,
+[data-testid="home-choice-fleet"] .home-tile-icon {
+  color: #000000 !important;
 }
-[data-testid="home-choice-map"] svg {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.75));
+[data-testid="home-choice-map"] .home-tile-sub,
+[data-testid="home-choice-fleet"] .home-tile-sub {
+  color: #ffffff !important;
 }
 .score-dial-arc-red {
   filter: drop-shadow(0 0 2px rgba(255, 42, 42, 0.4)) !important;
@@ -27,27 +27,54 @@
 .score-dial-arc-green {
   filter: drop-shadow(0 0 2px rgba(34, 197, 94, 0.4)) !important;
 }
-.compare-ev-visual {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
+[data-testid="score-dial-needle"] {
+  stroke: #ffffff !important;
+  stroke-width: 2.4px;
 }
-.compare-hero-photo {
+.compare-wordmark-wrap .wordmark-fit,
+.compare-wordmark-wrap .wordmark-truck {
+  font-size: 4.15rem !important;
+}
+.compare-wordmark-wrap .wordmark-my-wrap {
+  font-size: 3.35rem !important;
+}
+.compare-wordmark-wrap .wordmark-my {
+  transform: rotate(-6deg) !important;
+  -webkit-text-stroke: 0.5px rgba(15, 42, 36, 0.55) !important;
+}
+.compare-hero-photo,
+.compare-ev > .visual-photo {
   max-height: 168px !important;
   object-fit: contain !important;
   object-position: center 48% !important;
   filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.45)) !important;
 }
 @media (min-width: 900px) {
-  .compare-ev-visual {
+  .compare-ev {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(10rem, 0.9fr);
     align-items: center;
     gap: 0.25rem 0.4rem;
   }
-  .compare-hero-photo {
+  .compare-ev > .compare-select-wrap {
+    grid-column: 1 / -1;
+  }
+  .compare-ev > .visual-photo,
+  .compare-ev > .compare-hero-photo {
+    grid-column: 1;
+    grid-row: 2;
     max-height: 176px !important;
     object-position: center 42% !important;
+  }
+  .compare-ev > .score-dial,
+  .compare-ev > [data-testid="compare-ev-dial"] {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .compare-ev > .compare-kicker,
+  .compare-ev > .compare-money,
+  .compare-ev > .compare-next,
+  .compare-ev > .compare-next-actions {
+    grid-column: 1 / -1;
   }
 }
