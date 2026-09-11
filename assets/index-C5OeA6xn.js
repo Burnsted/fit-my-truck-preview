@@ -1,1 +1,1 @@
-LOAD_FROM_FILE:/tmp/cum_4.js
+@file:///tmp/stage1_call_args.json:content
