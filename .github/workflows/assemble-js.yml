@@ -23,8 +23,6 @@ jobs:
           SIZE=$(wc -c < assets/index-C5OeA6xn.js)
           echo "Assembled size: ${SIZE} bytes"
           test "${SIZE}" -ge 250000
-          head -c 40 assets/index-C5OeA6xn.js; echo
-          tail -c 60 assets/index-C5OeA6xn.js; echo
       - name: Commit assembled bundle
         run: |
           git config user.name "github-actions[bot]"
@@ -32,4 +30,5 @@ jobs:
           git add assets/index-C5OeA6xn.js
           git diff --staged --quiet && echo "No changes" && exit 0
           git commit -m "Assemble complete index-C5OeA6xn.js from part0–part14"
-          git push
+          git pull --rebase origin main
+          git push origin main
