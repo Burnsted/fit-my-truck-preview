@@ -3,6 +3,27 @@ function moneyText(el) {
   return (el?.textContent || "").replace(/\s/g, "");
 }
 
+function ensureCurrentVehicleLabel() {
+  const select = document.querySelector("[data-testid=compare-ice-select]");
+  const wrap = select?.closest(".compare-select-wrap") || select?.closest("label");
+  if (!wrap) return;
+  const caption = wrap.querySelector(".compare-select-caption")
+    || [...wrap.querySelectorAll("span")].find((el) => /current (truck|vehicle)/i.test(el.textContent || ""));
+  if (caption) {
+    if (caption.classList.contains("sr-only")) caption.classList.remove("sr-only");
+    if (!caption.classList.contains("compare-select-caption")) caption.classList.add("compare-select-caption");
+    if (caption.textContent !== "Current vehicle") caption.textContent = "Current vehicle";
+  } else {
+    const next = document.createElement("span");
+    next.className = "compare-select-caption";
+    next.textContent = "Current vehicle";
+    wrap.insertBefore(next, select);
+  }
+  if (select.getAttribute("aria-label") !== "Current vehicle") {
+    select.setAttribute("aria-label", "Current vehicle");
+  }
+}
+
 function applyTedLock() {
   const dash = document.querySelector("[data-testid=workday-compare-dash]");
   if (!dash) return;
@@ -32,6 +53,11 @@ function applyTedLock() {
   }
 }
 
-const observer = new MutationObserver(applyTedLock);
+function applyPreviewLocks() {
+  ensureCurrentVehicleLabel();
+  applyTedLock();
+}
+
+const observer = new MutationObserver(applyPreviewLocks);
 observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
-applyTedLock();
+applyPreviewLocks();

@@ -24,7 +24,7 @@
 /* Live preview JS uses inline colors, not .home-tile-* classes. Map title+sub must match #fff. */
 [data-testid="home-choice-map"] svg,
 [data-testid="home-choice-map"] span,
-[data-testid="home-choice-map"] .text-\[11px\] {
+[data-testid="home-choice-map"] .text-\\[11px\\] {
   color: #ffffff !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.88), 0 0 1px rgba(0, 0, 0, 0.95);
 }
@@ -51,6 +51,25 @@
 .compare-wordmark-wrap .wordmark-my {
   transform: rotate(-6deg) !important;
   -webkit-text-stroke: 0.5px rgba(15, 42, 36, 0.55) !important;
+}
+.compare-select-caption,
+.compare-ice .compare-select-wrap > span:first-child {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 0 0.28rem !important;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  white-space: normal !important;
+  border-width: 0 !important;
+  display: block !important;
+  font-family: "Oswald", sans-serif !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: #a1a1aa !important;
 }
 .compare-hero-photo,
 .compare-ev > .visual-photo {
