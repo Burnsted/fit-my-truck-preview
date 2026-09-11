@@ -2,11 +2,8 @@ name: Assemble JS bundle
 
 on:
   push:
-    branches:
-      - main
     paths:
-      - 'assets/index-GwcA7f_i.part*'
-      - '.github/workflows/assemble-js.yml'
+      - assets/index-BvE-znnG.part*
   workflow_dispatch:
 
 permissions:
@@ -17,18 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate JS parts into single bundle
-        run: |
-          cat assets/index-GwcA7f_i.part{0..14} > assets/index-GwcA7f_i.js
-          SIZE=$(wc -c < assets/index-GwcA7f_i.js)
-          echo "Assembled size: ${SIZE} bytes"
-          test "${SIZE}" -ge 250000
+      - name: Cat JS parts into bundle
+        run: cat assets/index-BvE-znnG.part0 assets/index-BvE-znnG.part1 assets/index-BvE-znnG.part2 assets/index-BvE-znnG.part3 > assets/index-BvE-znnG.js
       - name: Commit assembled bundle
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/index-GwcA7f_i.js
-          git diff --staged --quiet && echo "No changes" && exit 0
-          git commit -m "Assemble complete index-GwcA7f_i.js from part0–part14"
-          git pull --rebase origin main
-          git push origin main
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git add assets/index-BvE-znnG.js
+          git diff --staged --quiet && echo "No changes" || (git commit -m "chore: assemble index-BvE-znnG.js" && git push)
