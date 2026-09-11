@@ -1,0 +1,85 @@
+name: Clean dist rebuild
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/clean-rebuild.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: clean-rebuild
+  cancel-in-progress: true
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview repo
+        uses: actions/checkout@v4
+        with:
+          path: preview
+
+      - name: Checkout Fit My Truck source
+        uses: actions/checkout@v4
+        with:
+          repository: Burnsted/fit-my-truck
+          ref: cursor/map-tile-text-53e3
+          path: src
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: src/pnpm-lock.yaml
+
+      - name: Build public preview
+        working-directory: src
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build:preview
+
+      - name: Replace preview with clean dist
+        working-directory: preview
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git rm -rf --ignore-unmatch assets vendor source-for-review .tmp-upload .cursor-write-probe.txt || true
+          rm -rf assets vendor source-for-review .tmp-upload
+          rm -f .github/workflows/assemble-*.yml \
+                .github/workflows/materialize-*.yml \
+                .github/workflows/pack-*.yml \
+                .github/workflows/split-*.yml \
+                .github/workflows/cleanup-*.yml \
+                .github/workflows/fix-asm-*.yml \
+                .github/workflows/clean-rebuild.yml
+
+          cp -R ../src/dist-preview/* .
+          touch .nojekyll
+
+          HTML_REFS=$(grep -o 'assets/index-[^"]*' index.html | sort)
+          DISK_REFS=$(ls assets | grep -E 'index-.*\.(js|css)$' | sed 's|^|assets/|' | sort)
+          echo "index.html refs:"
+          echo "$HTML_REFS"
+          echo "assets on disk:"
+          echo "$DISK_REFS"
+          if [ "$HTML_REFS" != "$DISK_REFS" ]; then
+            echo "HASH MISMATCH — not pushing"
+            exit 1
+          fi
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "Clean dist rebuild, remove chunked-upload wreckage"
+            git push origin HEAD:main
+          fi
