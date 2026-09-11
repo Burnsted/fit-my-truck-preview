@@ -1,1 +1,1 @@
-LOAD_FROM:/tmp/stage1_live.json
+LOAD_FROM:/tmp/stage0_5k_args.json
