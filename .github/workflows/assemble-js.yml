@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'assets/index-C0yDz0UG.part*'
+      - 'assets/index-GwcA7f_i.part*'
       - '.github/workflows/assemble-js.yml'
   workflow_dispatch:
 
@@ -19,16 +19,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Concatenate JS parts into single bundle
         run: |
-          cat assets/index-C0yDz0UG.part{0..14} > assets/index-C0yDz0UG.js
-          SIZE=$(wc -c < assets/index-C0yDz0UG.js)
+          cat assets/index-GwcA7f_i.part{0..14} > assets/index-GwcA7f_i.js
+          SIZE=$(wc -c < assets/index-GwcA7f_i.js)
           echo "Assembled size: ${SIZE} bytes"
           test "${SIZE}" -ge 250000
       - name: Commit assembled bundle
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/index-C0yDz0UG.js
+          git add assets/index-GwcA7f_i.js
           git diff --staged --quiet && echo "No changes" && exit 0
-          git commit -m "Assemble complete index-C0yDz0UG.js from part0–part14"
+          git commit -m "Assemble complete index-GwcA7f_i.js from part0–part14"
           git pull --rebase origin main
           git push origin main
