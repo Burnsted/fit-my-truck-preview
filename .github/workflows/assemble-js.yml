@@ -1,8 +1,11 @@
 name: Assemble JS bundle
+
 on:
   push:
+    branches:
+      - main
     paths:
-      - 'assets/_js_upload/**'
+      - 'assets/index-C5OeA6xn.part*'
       - '.github/workflows/assemble-js.yml'
   workflow_dispatch:
 
@@ -14,17 +17,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate JS chunks
+      - name: Concatenate JS parts into single bundle
         run: |
-          cat assets/_js_upload/chunk* > assets/index-C5OeA6xn.js
-          echo "Assembled size: $(wc -c < assets/index-C5OeA6xn.js) bytes"
-          head -c 20 assets/index-C5OeA6xn.js; echo
-          tail -c 50 assets/index-C5OeA6xn.js; echo
+          cat assets/index-C5OeA6xn.part{0..14} > assets/index-C5OeA6xn.js
+          SIZE=$(wc -c < assets/index-C5OeA6xn.js)
+          echo "Assembled size: ${SIZE} bytes"
+          test "${SIZE}" -ge 250000
+          head -c 40 assets/index-C5OeA6xn.js; echo
+          tail -c 60 assets/index-C5OeA6xn.js; echo
       - name: Commit assembled bundle
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add assets/index-C5OeA6xn.js
           git diff --staged --quiet && echo "No changes" && exit 0
-          git commit -m "Deploy complete Vite assets (CSS + JS bundle)"
+          git commit -m "Assemble complete index-C5OeA6xn.js from part0–part14"
           git push
