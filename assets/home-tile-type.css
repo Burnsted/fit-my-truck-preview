@@ -1,0 +1,13 @@
+/* Home tiles: large titles black, small subtitle copy white */
+.home-screen .home-tile-title,
+.home-screen .home-tile-icon,
+[data-testid^="home-choice-"] .home-tile-title,
+[data-testid^="home-choice-"] .home-tile-icon {
+  color: #000000 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.72), 0 0 1px rgba(255, 255, 255, 0.9);
+}
+.home-screen .home-tile-sub,
+[data-testid^="home-choice-"] .home-tile-sub {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.88), 0 0 1px rgba(0, 0, 0, 0.95);
+}
