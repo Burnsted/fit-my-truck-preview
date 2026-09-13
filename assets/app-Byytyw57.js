@@ -1,0 +1,1 @@
+import"./app-CVJstY8Z.js";import{t as e}from"./app-Cc4RokW5.js";import{StrictMode as t}from"react";import{createRoot as n}from"react-dom/client";import{jsx as r}from"react/jsx-runtime";n(document.getElementById(`root`)).render(r(t,{children:r(e,{})}));
