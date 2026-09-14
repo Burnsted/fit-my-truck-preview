@@ -24,6 +24,12 @@
     <link id="fit-my-truck-leaflet-css" rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
     <script type="module" crossorigin src="./assets/index-DO_za2BU.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CEHs4S03.css">
+    <style id="home-tile-size-fix">
+      /* Surgical fix: make all four home tiles match the largest (Map My Day) tile's height. */
+      [data-testid^="home-choice-"] {
+        min-height: 11rem !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
