@@ -19,11 +19,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Decode base64 sidecars into real binary files, drop legacy files
+      - name: Reassemble split text parts, decode base64 sidecars, clean up
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Large text files (e.g. the app JS bundle) were pushed as many small
+          # ASCII-safe "<name>.partNNN" fragments over the text-only Contents
+          # API. Reassemble each family of parts (sorted lexically, so part001
+          # < part002 < ...) back into the real file, then drop the parts.
+          find . -path ./.git -prune -o -name '*.part[0-9]*' -print | \
+            sed -E 's/\.part[0-9]+$//' | sort -u | while read -r target; do
+              : > "$target"
+              for part in $(find . -path ./.git -prune -o -name "$(basename "$target").part[0-9]*" -print | sort); do
+                cat "$part" >> "$target"
+              done
+              find . -path ./.git -prune -o -name "$(basename "$target").part[0-9]*" -print -delete >/dev/null
+            done
 
           # A text-only push (Contents API) cannot carry raw binary bytes, so
           # binary assets land as ASCII-safe "<name>.b64" sidecars. Decode
@@ -41,6 +54,9 @@ jobs:
           test -f vendor/leaflet/leaflet.css
           test -f vendor/leaflet/images/marker-icon.png
 
+          # Sanity check: the reassembled JS must be syntactically valid.
+          node --check assets/index-*.js
+
           # Drop anything not part of the fresh manifest (old chunked-upload
           # wreckage, orphaned hashed modules, one-off patch files, etc).
           git ls-files -z | while IFS= read -r -d '' f; do
@@ -56,6 +72,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
-            git commit -m "Clean rebuild: decode binaries, drop legacy chunked-upload files"
+            git commit -m "Clean rebuild: reassemble parts, decode binaries, drop legacy files"
             git push origin HEAD:main
           fi
