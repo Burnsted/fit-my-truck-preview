@@ -34,8 +34,8 @@ jobs:
               : > "$target"
               for part in $(find . -path ./.git -prune -o -name "$(basename "$target").part[0-9]*" -print | sort); do
                 cat "$part" >> "$target"
+                rm -f "$part"
               done
-              find . -path ./.git -prune -o -name "$(basename "$target").part[0-9]*" -print -delete >/dev/null
             done
 
           # A text-only push (Contents API) cannot carry raw binary bytes, so
