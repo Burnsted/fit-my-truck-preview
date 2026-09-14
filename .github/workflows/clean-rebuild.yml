@@ -19,16 +19,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Reassemble split text parts, decode base64 sidecars, clean up
+      - name: Reassemble split text parts, clean up legacy files
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Large text files (e.g. the app JS bundle) were pushed as many small
-          # ASCII-safe "<name>.partNNN" fragments over the text-only Contents
-          # API. Reassemble each family of parts (sorted lexically, so part001
-          # < part002 < ...) back into the real file, then drop the parts.
+          # The app JS bundle was pushed as many small ASCII-safe
+          # "<name>.partNNN" plain-text fragments over the text-only Contents
+          # API (each part is exact UTF-8 source text, no encoding tricks).
+          # Reassemble each family of parts (sorted lexically, so part001 <
+          # part002 < ...) back into the real file, then drop the parts.
           find . -path ./.git -prune -o -name '*.part[0-9]*' -print | \
             sed -E 's/\.part[0-9]+$//' | sort -u | while read -r target; do
               : > "$target"
@@ -38,21 +39,10 @@ jobs:
               done
             done
 
-          # A text-only push (Contents API) cannot carry raw binary bytes, so
-          # binary assets land as ASCII-safe "<name>.b64" sidecars. Decode
-          # each one back into the real file, then drop the sidecar.
-          find . -path ./.git -prune -o -name '*.b64' -print | while read -r f; do
-            target="${f%.b64}"
-            base64 -d "$f" > "$target"
-            rm "$f"
-          done
-
           test -f index.html
           test -f 404.html
           test -n "$(find assets -maxdepth 1 -name 'index-*.js' 2>/dev/null)"
-          test -n "$(find assets -maxdepth 1 -name '*.jpg' 2>/dev/null)"
           test -f vendor/leaflet/leaflet.css
-          test -f vendor/leaflet/images/marker-icon.png
 
           # Sanity check: the reassembled JS must be syntactically valid.
           node --check assets/index-*.js
@@ -72,6 +62,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
-            git commit -m "Clean rebuild: reassemble parts, decode binaries, drop legacy files"
+            git commit -m "Clean rebuild: reassemble text parts, drop legacy files"
             git push origin HEAD:main
           fi
