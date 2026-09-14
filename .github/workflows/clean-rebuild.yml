@@ -1,4 +1,5 @@
 name: Clean dist rebuild
+# trigger: reassemble js-with-images 77 parts
 
 on:
   workflow_dispatch:
