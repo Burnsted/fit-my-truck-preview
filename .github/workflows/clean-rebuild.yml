@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: clean-rebuild
+  group: clean-rebuild-probe
   cancel-in-progress: true
 
 jobs:
@@ -18,52 +18,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: cursor-write-probe
 
-      - name: Remove chunked-upload wreckage, keep live assets
+      - name: Decode base64 sidecars into real binary files, drop legacy files
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          test -f index.html
-          test -f assets/index-C5OeA6xn.js
-          test -f assets/index-C0u2FdsI.css
-          test -f assets/map-tile-white.css
-          test -f vendor/leaflet/leaflet.css
+          find . -path ./.git -prune -o -name '*.b64' -print | while read -r f; do
+            target="${f%.b64}"
+            base64 -d "$f" > "$target"
+            rm "$f"
+          done
 
-          JS_SIZE=$(wc -c < assets/index-C5OeA6xn.js)
-          if [ "$JS_SIZE" -lt 200000 ]; then
-            echo "JS too small: $JS_SIZE"
-            exit 1
-          fi
+          test -f probe/hello.txt
 
-          rm -rf source-for-review .tmp-upload assets/_js_upload assets/_src assets/_hex assets/_fix assets/_asm assets/_chunk_test.txt
-          rm -f .cursor-write-probe.txt
-          find assets -name '*.part*' -delete
-          find assets -name '_*' -delete
-
-          # Drop unused complete CSS/JS hashes; keep the live pair plus map-tile override
-          find assets -maxdepth 1 -type f -name 'index-*' ! -name 'index-C5OeA6xn.js' ! -name 'index-C0u2FdsI.css' -delete
-
-          rm -f .github/workflows/assemble-*.yml \
-                .github/workflows/materialize-*.yml \
-                .github/workflows/pack-*.yml \
-                .github/workflows/split-*.yml \
-                .github/workflows/cleanup-*.yml \
-                .github/workflows/fix-asm-*.yml
-
-          HTML_JS=$(grep -oE 'assets/index-[^"]+\.js' index.html | head -1)
-          HTML_CSS=$(grep -oE 'assets/index-[^"]+\.css' index.html | head -1)
-          test -f "$HTML_JS"
-          test -f "$HTML_CSS"
-          echo "keeping $HTML_JS $(wc -c < "$HTML_JS") bytes"
-          echo "keeping $HTML_CSS $(wc -c < "$HTML_CSS") bytes"
-          ls -la assets vendor/leaflet
+          git ls-files -z | while IFS= read -r -d '' f; do
+            case "$f" in
+              probe/hello.txt) ;;
+              .github/workflows/clean-rebuild.yml) ;;
+              *) git rm -q --ignore-unmatch -- "$f" ;;
+            esac
+          done
 
           git add -A
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
-            git commit -m "Clean dist rebuild, remove chunked-upload wreckage"
-            git push origin HEAD:main
+            git commit -m "probe: clean rebuild result"
+            git push origin HEAD:cursor-write-probe
           fi
