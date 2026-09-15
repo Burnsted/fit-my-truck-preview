@@ -1,5 +1,5 @@
 name: Clean dist rebuild
-# trigger: reassemble js-with-images 77 parts
+# trigger: reassemble play-day images + interior, 102 parts
 
 on:
   workflow_dispatch:
