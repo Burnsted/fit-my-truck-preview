@@ -1,1 +1,12 @@
-$file:/tmp/fit-my-truck-preview/staging-simplify/sitemap.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/about</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/build-my-workday</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/build-my-play-day</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/map-my-day</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/find-my-truck</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/compare</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/privacy</loc></url>
+  <url><loc>https://burnsted.github.io/fit-my-truck-preview/#/credits</loc></url>
+</urlset>
