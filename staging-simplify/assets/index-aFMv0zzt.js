@@ -1,8 +1,23 @@
-const __FMT_PARTS = 124;
-const __FMT_BASE = new URL("./.jsb64/", import.meta.url);
+const __FMT_CSS_PARTS = 22;
+const __FMT_JS_PARTS = 124;
+const __FMT_CSS_BASE = new URL("./.cssb64/", import.meta.url);
+const __FMT_JS_BASE = new URL("./.jsb64/", import.meta.url);
+const __FMT_CSS_B64 = await Promise.all(
+  Array.from({ length: __FMT_CSS_PARTS }, (_, i) =>
+    fetch(new URL(String(i).padStart(2, "0") + ".b64", __FMT_CSS_BASE)).then((r) => {
+      if (!r.ok) throw new Error("Failed to load CSS b64 part " + i);
+      return r.text();
+    })
+  )
+);
+const __FMT_CSS_TXT = atob(__FMT_CSS_B64.join("").replace(/\s+/g, ""));
+const __FMT_STYLE = document.createElement("style");
+__FMT_STYLE.setAttribute("data-fmt-css", "index-DgqULBjR");
+__FMT_STYLE.textContent = __FMT_CSS_TXT;
+document.documentElement.appendChild(__FMT_STYLE);
 const __FMT_B64 = await Promise.all(
-  Array.from({ length: __FMT_PARTS }, (_, i) =>
-    fetch(new URL(String(i).padStart(2, "0") + ".b64", __FMT_BASE)).then((r) => {
+  Array.from({ length: __FMT_JS_PARTS }, (_, i) =>
+    fetch(new URL(String(i).padStart(2, "0") + ".b64", __FMT_JS_BASE)).then((r) => {
       if (!r.ok) throw new Error("Failed to load JS b64 part " + i);
       return r.text();
     })
