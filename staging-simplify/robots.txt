@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /fit-my-truck-preview/
-Allow: /
-
-Sitemap: https://burnsted.github.io/fit-my-truck-preview/sitemap.xml
