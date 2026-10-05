@@ -1,1 +1,1 @@
-$file:/tmp/probe_expand_payload.txt
+PROBE_REAL_EMBED_OK_FROM_JSONFILE
