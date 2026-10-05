@@ -1,0 +1,4 @@
+Fit My Truck Find-page-simplify staging bundle.
+Source tip: 4079d1ca4a29b175b998fe2828d7ab00c73c4fa4 (cursor/find-page-simplify-30-dcbc)
+Relative base ./ for GitHub Pages path /staging-simplify/
+Real Vite assets only. No chunked loaders, no blob imports, no absolute URL rewrites.
