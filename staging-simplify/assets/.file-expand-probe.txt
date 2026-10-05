@@ -1,1 +1,1 @@
-PROBE_REAL_EMBED_OK_FROM_JSONFILE
+$file:/workspace/.upload/probe_small.txt
