@@ -1,1 +1,1 @@
-$file:/tmp/fit-my-truck-preview/staging-simplify/assets/index-aFMv0zzt.js
+$file:/tmp/js_content_only.js
