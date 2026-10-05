@@ -1,1 +1,1 @@
-$file:/tmp/upload_bundles/index-aFMv0zzt.js
+file:///tmp/upload_bundles/index-aFMv0zzt.js
