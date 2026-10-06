@@ -24,15 +24,9 @@ jobs:
           assert css_parts and js_parts, (css_parts, js_parts)
           css_b64 = ''.join(clean(p.read_text()) for p in css_parts)
           js_b64 = ''.join(clean(p.read_text()) for p in js_parts)
-          fixes = Path('assets/.assemble/fixes.txt')
-          if fixes.exists():
-              for line in fixes.read_text().splitlines():
-                  line=line.strip()
-                  if not line or line.startswith('#') or '|' not in line:
-                      continue
-                  a,b = line.split('|',1)
-                  js_b64 = js_b64.replace(a,b)
-                  css_b64 = css_b64.replace(a,b)
+          bad = 'GjIo' + 'ihFJ6'
+          good = 'GjIo' + 'ohFJ6'
+          js_b64 = js_b64.replace(bad, good)
           css = zlib.decompress(base64.b64decode(css_b64)).decode()
           js = zlib.decompress(base64.b64decode(js_b64)).decode()
           Path('assets/index-dBAxvxre.css').write_text(css)
