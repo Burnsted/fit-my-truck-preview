@@ -25,7 +25,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          # Prefer sibling-repo raw via token; fall back to checkout-style API blob.
+          # Cross-repo fetch may fail if GITHUB_TOKEN lacks access to fit-my-truck; GC still applies.
           if ! curl -fsSL \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github.raw" \
