@@ -11,23 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Decompress and write tip assets
+      - name: Concatenate and write tip assets
         run: |
           set -euo pipefail
           python3 <<'PY'
-          import base64, zlib
           from pathlib import Path
-          css_b64 = Path('assets/.assemble/css.zlib.b64').read_text().strip()
-          css = zlib.decompress(base64.b64decode(css_b64))
-          Path('assets/index-dBAxvxre.css').write_bytes(css)
-          js_parts = sorted(Path('assets/.assemble/jsz').glob('j*.b64'))
-          js_b64 = ''.join(p.read_text().strip() for p in js_parts)
-          js = zlib.decompress(base64.b64decode(js_b64))
-          Path('assets/index-qJlZHThm.js').write_bytes(js)
-          css_t = css.decode()
-          js_t = js.decode()
-          assert 'overflow-x:clip' in css_t and 'consent-notice-bar' in css_t
-          assert 'fmtPortal' in js_t and 'home-choice-fleet' in js_t and 'fleetfit-result-cta' in js_t
+          css_parts = sorted(Path('assets/.assemble/css').glob('c*.txt'))
+          js_parts = sorted(Path('assets/.assemble/js').glob('j*.txt'))
+          assert css_parts and js_parts, (css_parts, js_parts)
+          css = ''.join(p.read_text() for p in css_parts)
+          js = ''.join(p.read_text() for p in js_parts)
+          Path('assets/index-dBAxvxre.css').write_text(css)
+          Path('assets/index-qJlZHThm.js').write_text(js)
+          assert 'overflow-x:clip' in css and 'consent-notice-bar' in css
+          assert 'fmtPortal' in js and 'home-choice-fleet' in js and 'fleetfit-result-cta' in js
           print('css', len(css), 'js', len(js))
           PY
       - name: Commit assembled assets
