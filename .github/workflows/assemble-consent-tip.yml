@@ -1,0 +1,43 @@
+name: assemble-consent-tip
+on:
+  workflow_dispatch:
+  push:
+    branches: [cursor/consent-fleetfit-tip-8aaf]
+    paths:
+      - 'assets/.assemble/tip-patches.json'
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply tip-patches
+        run: |
+          python3 - <<'PY'
+          import json, base64, hashlib
+          from pathlib import Path
+          doc=json.loads(Path('assets/.assemble/tip-patches.json').read_text())
+          def apply(text, plist):
+              out=text
+              for s,e,b64 in sorted(plist, key=lambda x:x[0], reverse=True):
+                  out=out[:s]+(base64.b64decode(b64).decode() if b64 else '')+out[e:]
+              return out
+          js=apply(Path(doc['js_base']).read_text(), doc['js_patches'])
+          css=apply(Path(doc['css_base']).read_text(), doc['css_patches'])
+          assert hashlib.sha256(js.encode()).hexdigest()==doc['js_sha256'], hashlib.sha256(js.encode()).hexdigest()
+          assert hashlib.sha256(css.encode()).hexdigest()==doc['css_sha256']
+          for n in ['home-choice-fleet','fleetfit-result-cta','fmtPortal']:
+              assert n in js, n
+          assert 'overflow-x:clip' in css and 'consent-notice-bar' in css
+          Path(doc['js_out']).write_text(js)
+          Path(doc['css_out']).write_text(css)
+          print('wrote', doc['js_out'], len(js), doc['css_out'], len(css))
+          PY
+      - name: Commit tip assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/index-QpfzIyWj.js assets/index-dBAxvxre.css
+          git diff --cached --quiet || git commit -m 'fix(consent): emit QpfzIyWj FleetFit+consent tip from patches'
+          git push
