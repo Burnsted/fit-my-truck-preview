@@ -1,1 +1,1 @@
-@/tmp/fmt-repos/fit-my-truck-preview/assets/index-YjYaDdGR.js
+__LOAD_FROM_FILE__:/tmp/js-content-only.txt
