@@ -11,37 +11,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Decode zlib+b64 tip assets
+      - name: Patch tip assets from YjYaDdGR / DyqnMpUR
         run: |
           set -euo pipefail
           python3 <<'PY'
-          import base64, zlib, re
+          import base64, hashlib, json
           from pathlib import Path
-          def clean(s):
-              return re.sub(r'\s+', '', s)
-          css_parts = sorted(Path('assets/.assemble/cssb').glob('css_p*.b64'))
-          p_parts = sorted(Path('assets/.assemble/jsz').glob('js_p0[0-3].b64'))
-          q_parts = sorted(Path('assets/.assemble/jsz').glob('js_q*.b64'))
-          js_parts = p_parts + q_parts
-          assert css_parts and len(p_parts)==4 and q_parts, (css_parts, p_parts, q_parts)
-          css_b64 = ''.join(clean(p.read_text()) for p in css_parts)
-          js_b64 = ''.join(clean(p.read_text()) for p in js_parts)
-          repairs = [
-            ('GjIo'+'ihFJ6', 'GjIo'+'ohFJ6'),
-            ('Qpaw0/g'+'omLOe2', 'Qpaw0/m'+'omLOe2'),
-            ('EyabX'+'ZaL8lH5', 'EyabX'+'RaL8lH5'),
-            ('epJ3RM'+'9yqhXha', 'epJ3RM'+'1yqhXha'),
-            ('i5p1P2'+'28JmfZt', 'i5p1P2'+'88JmfZt'),
-          ]
-          for a,b in repairs:
-              js_b64 = js_b64.replace(a,b)
-          css = zlib.decompress(base64.b64decode(css_b64)).decode()
-          js = zlib.decompress(base64.b64decode(js_b64)).decode()
-          Path('assets/index-dBAxvxre.css').write_text(css)
-          Path('assets/index-qJlZHThm.js').write_text(js)
-          assert 'overflow-x:clip' in css and 'consent-notice-bar' in css
-          assert 'fmtPortal' in js and 'home-choice-fleet' in js and 'fleetfit-result-cta' in js
-          print('css', len(css), 'js', len(js), 'js_parts', len(js_parts))
+          doc = json.loads(Path('assets/.assemble/tip-patches.json').read_text())
+          def apply(base_path, patches):
+              data = bytearray(Path(base_path).read_bytes())
+              # apply from end so earlier offsets stay valid
+              for i1, i2, b64 in sorted(patches, key=lambda p: p[0], reverse=True):
+                  rep = base64.b64decode(b64) if b64 else b''
+                  data[i1:i2] = rep
+              return bytes(data)
+          js = apply(doc['js_base'], doc['js_patches'])
+          css = apply(doc['css_base'], doc['css_patches'])
+          assert hashlib.sha256(js).hexdigest() == doc['js_sha256'], hashlib.sha256(js).hexdigest()
+          assert hashlib.sha256(css).hexdigest() == doc['css_sha256'], hashlib.sha256(css).hexdigest()
+          js_text = js.decode()
+          css_text = css.decode()
+          assert 'fmtPortal' in js_text and 'home-choice-fleet' in js_text and 'fleetfit-result-cta' in js_text
+          assert 'overflow-x:clip' in css_text and 'consent-notice-bar' in css_text
+          Path(doc['js_out']).write_bytes(js)
+          Path(doc['css_out']).write_bytes(css)
+          print('js', len(js), 'css', len(css))
           PY
       - name: Commit assembled assets
         run: |
