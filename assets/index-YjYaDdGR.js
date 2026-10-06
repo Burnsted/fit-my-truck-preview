@@ -1,2 +1,4 @@
-/* Temporary loader: tip bundle restored from last-good commit via jsDelivr while MCP create_or_update_file cannot carry the 373KB payload. */
-import "https://cdn.jsdelivr.net/gh/Burnsted/fit-my-truck-preview@6d6d32ff80d98db493504ab3c7e10d665d5a4a3e/assets/index-YjYaDdGR.js";
+/* Restored tip: load good main YjYaDdGR (MCP cannot rewrite 373KB blobs).
+ * Prefer PR from cursor/fleetfit-result-blurb-9dd3 which leaves the tip untouched.
+ */
+import "https://cdn.jsdelivr.net/gh/Burnsted/fit-my-truck-preview@main/assets/index-YjYaDdGR.js";
