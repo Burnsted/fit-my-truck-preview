@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title">
+  <title id="title">General contractor placeholder illustration - two work trucks at a framed jobsite</title>
+  <defs>
+    <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe3b0"/>
+      <stop offset="100%" stop-color="#fff6e6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky2)"/>
+  <rect x="0" y="480" width="1200" height="195" fill="#c9a06a"/>
+  <rect x="0" y="470" width="1200" height="16" fill="#b98a4f"/>
+  <g stroke="#6b4a2c" stroke-width="8" fill="none" opacity="0.85">
+    <path d="M420,470 L600,300 L780,470"/>
+    <path d="M460,470 L460,340"/>
+    <path d="M740,470 L740,340"/>
+    <path d="M420,470 L780,470"/>
+  </g>
+  <g transform="translate(60,340)">
+    <rect x="0" y="70" width="190" height="80" rx="8" fill="#0f2a24"/>
+    <rect x="10" y="80" width="170" height="60" rx="5" fill="#1d1d1d"/>
+    <rect x="150" y="30" width="110" height="60" rx="8" fill="#111111" stroke="#f5b400" stroke-width="3"/>
+    <rect x="162" y="40" width="45" height="30" rx="3" fill="#aedcea"/>
+    <circle cx="45" cy="160" r="26" fill="#111"/>
+    <circle cx="205" cy="160" r="26" fill="#111"/>
+  </g>
+  <g transform="translate(560,330)">
+    <rect x="0" y="80" width="220" height="80" rx="8" fill="#ffffff" stroke="#0f2a24" stroke-width="3"/>
+    <rect x="170" y="30" width="120" height="70" rx="8" fill="#f6fcfc" stroke="#0f2a24" stroke-width="3"/>
+    <rect x="182" y="42" width="50" height="34" rx="4" fill="#aedcea"/>
+    <rect x="0" y="10" width="150" height="18" rx="3" fill="#22a559" transform="rotate(-8 75 19)"/>
+    <circle cx="45" cy="170" r="27" fill="#0f2a24"/>
+    <circle cx="230" cy="170" r="27" fill="#0f2a24"/>
+  </g>
+  <g transform="translate(870,440)">
+    <rect x="0" y="0" width="120" height="16" rx="4" fill="#0f2a24"/>
+    <rect x="4" y="16" width="30" height="60" fill="#5a4632"/>
+    <path d="M100,16 L120,-30 L140,16 Z" fill="#f5b400"/>
+  </g>
+  <g transform="translate(1000,150)" fill="#f5b400">
+    <path d="M40,0 L80,55 L0,55 Z"/>
+    <rect x="10" y="55" width="60" height="14" fill="#0f2a24"/>
+  </g>
+</svg>
