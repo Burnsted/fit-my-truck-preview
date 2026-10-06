@@ -17,16 +17,18 @@ jobs:
           python3 <<'PY'
           import base64, zlib
           from pathlib import Path
-          css_b64 = Path('assets/.assemble/css.zlib.b64').read_text().strip()
-          js_parts = sorted(Path('assets/.assemble/jsz').glob('j*.b64'))
-          assert css_b64 and js_parts, (len(css_b64), js_parts)
+          css_parts = sorted(Path('assets/.assemble/cssb').glob('css_p*.b64'))
+          js_parts = sorted(Path('assets/.assemble/jsz').glob('js_p*.b64'))
+          assert css_parts and js_parts, (css_parts, js_parts)
+          css_b64 = ''.join(p.read_text().strip() for p in css_parts)
+          js_b64 = ''.join(p.read_text().strip() for p in js_parts)
           css = zlib.decompress(base64.b64decode(css_b64)).decode()
-          js = zlib.decompress(base64.b64decode(''.join(p.read_text().strip() for p in js_parts))).decode()
+          js = zlib.decompress(base64.b64decode(js_b64)).decode()
           Path('assets/index-dBAxvxre.css').write_text(css)
           Path('assets/index-qJlZHThm.js').write_text(js)
           assert 'overflow-x:clip' in css and 'consent-notice-bar' in css
           assert 'fmtPortal' in js and 'home-choice-fleet' in js and 'fleetfit-result-cta' in js
-          print('css', len(css), 'js', len(js))
+          print('css', len(css), 'js', len(js), 'css_parts', len(css_parts), 'js_parts', len(js_parts))
           PY
       - name: Commit assembled assets
         run: |
