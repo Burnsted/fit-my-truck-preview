@@ -1,1 +1,1 @@
-$file:/tmp/upload-queue/006.txt
+$file:/tmp/c06_exact.txt
