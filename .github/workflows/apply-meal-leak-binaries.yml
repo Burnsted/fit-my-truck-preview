@@ -6,6 +6,7 @@ on:
       - "assets/*.jpg.b64"
       - "assets/*.jpg.b64.part*"
       - "assets/_b64_chunks/**"
+      - "assets/*.svg"
       - ".github/workflows/apply-meal-leak-binaries.yml"
   workflow_dispatch:
 
@@ -19,82 +20,75 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: cursor/strip-meal-leak-assets-3223
-      - name: Fetch clean woodwork JPG from fit-my-truck source branch
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          # Cross-repo fetch may fail if GITHUB_TOKEN lacks access to fit-my-truck; GC still applies.
-          if ! curl -fsSL \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github.raw" \
-            -o /tmp/wood-clean.jpg \
-            "https://api.github.com/repos/Burnsted/fit-my-truck/contents/src/assets/home-workday-woodwork.jpg?ref=cursor/strip-meal-leak-assets-3223"; then
-            echo "woodwork fetch failed (token may lack cross-repo access); skipping woodwork binary update"
-            exit 0
-          fi
-          python3 <<'PY'
-          import base64, hashlib
-          from pathlib import Path
-          data = Path("/tmp/wood-clean.jpg").read_bytes()
-          md5 = hashlib.md5(data).hexdigest()
-          assert md5 == "ec87762a5018f982b7144fcad7909b9f", md5
-          Path("assets/home-workday-woodwork-Dev4WPAv.jpg").write_bytes(data)
-          b64 = base64.b64encode(data).decode("ascii")
-          size = 80000
-          for i in range(0, len(b64), size):
-              idx = i // size
-              p = Path(f"assets/home-workday-woodwork-Dev4WPAv.jpg.b64.part{idx:02d}")
-              p.write_text(b64[i:i+size])
-              print("wrote", p, len(b64[i:i+size]))
-          for staging in ("staging-simplify", "staging-feedback"):
-              staged = Path(staging) / "assets" / "home-workday-woodwork-Dev4WPAv.jpg"
-              if staged.parent.is_dir():
-                  staged.write_bytes(data)
-                  print("mirrored", staged)
-          print("woodwork ok", len(data), md5)
-          PY
-      - name: Assemble GC b64 from zlib chunks (or plain chunks) and decode
+      - name: Assemble woodwork + GC JPGs from zlib.b64 chunks
         run: |
           set -euo pipefail
           python3 <<'PY'
-          import base64, hashlib, zlib
+          import base64, hashlib, zlib, re
           from pathlib import Path
 
           chunks = Path("assets/_b64_chunks")
-          out_b64 = Path("assets/workday-trade-general-contractor-01Q32nWx.jpg.b64")
-          text = None
-          zparts = sorted(chunks.glob("gc_*.zlib.b64")) if chunks.is_dir() else []
-          if zparts:
+          EXPECTED = {
+              "home-workday-woodwork-Dev4WPAv.jpg": "ec87762a5018f982b7144fcad7909b9f",
+              "workday-trade-general-contractor-01Q32nWx.jpg": "394dbbfbbd8ab19c4e6306bf53224e69",
+          }
+
+          def list_zlib_chunks(prefix: str):
+              # Prefer complete two-digit sets (gc_00..gc_33, wood_00..wood_98)
+              # over partial three-digit wood_000.. uploads left as orphans.
+              allp = [
+                  p for p in sorted(chunks.glob(f"{prefix}_*.zlib.b64"))
+                  if re.fullmatch(rf"{prefix}_\d+\.zlib\.b64", p.name)
+              ]
+              by_width = {}
+              for p in allp:
+                  m = re.fullmatch(rf"{prefix}_(\d+)\.zlib\.b64", p.name)
+                  by_width.setdefault(len(m.group(1)), []).append(p)
+              if not by_width:
+                  return []
+              two = sorted(by_width.get(2, []))
+              if len(two) >= 30:
+                  return two
+              return sorted(max(by_width.values(), key=len))
+
+          def load_zlib_b64_chunk(p: Path) -> str:
+              # Chunks may be raw zlib.b64 ASCII, or hex-encoded ASCII (MCP-safe transport).
+              raw = p.read_text().strip()
+              if re.fullmatch(r"[0-9a-fA-F]+", raw) and len(raw) % 2 == 0:
+                  raw = bytes.fromhex(raw).decode("ascii")
+              return raw
+
+          def assemble_from_zlib_chunks(prefix: str) -> bytes:
+              zparts = list_zlib_chunks(prefix)
+              if not zparts:
+                  raise SystemExit(f"missing zlib chunks for {prefix}")
               text = "".join(
-                  zlib.decompress(base64.b64decode(p.read_text().strip())).decode("ascii")
+                  zlib.decompress(base64.b64decode(load_zlib_b64_chunk(p))).decode("ascii")
                   for p in zparts
               )
-              print("assembled GC from zlib chunks", len(zparts))
-          else:
-              plains = sorted(chunks.glob("gc_*.txt")) if chunks.is_dir() else []
-              # Prefer numbered plain chunks; ignore probe leftovers
-              plains = [p for p in plains if p.name.startswith("gc_") and p.suffix == ".txt"]
-              if plains:
-                  text = "".join(p.read_text().strip() for p in plains)
-                  print("assembled GC from plain chunks", len(plains))
-              elif out_b64.exists():
-                  text = out_b64.read_text().strip()
-                  print("using existing GC b64 file")
-              else:
-                  raise SystemExit("missing GC b64 chunks")
-          out_b64.write_text(text)
-          data = base64.b64decode(text)
-          md5 = hashlib.md5(data).hexdigest()
-          assert md5 == "394dbbfbbd8ab19c4e6306bf53224e69", md5
-          Path("assets/workday-trade-general-contractor-01Q32nWx.jpg").write_bytes(data)
-          for staging in ("staging-simplify", "staging-feedback"):
-              staged = Path(staging) / "assets" / "workday-trade-general-contractor-01Q32nWx.jpg"
-              if staged.parent.is_dir():
-                  staged.write_bytes(data)
-                  print("mirrored", staged)
-          print("GC ok", len(data), md5)
+              data = base64.b64decode(text)
+              print(f"assembled {prefix} from {len(zparts)} zlib chunks; b64_chars={len(text)}")
+              return data
+
+          def write_binary(rel_name: str, data: bytes) -> None:
+              md5 = hashlib.md5(data).hexdigest()
+              expected = EXPECTED[rel_name]
+              if md5 != expected:
+                  raise SystemExit(f"md5 mismatch {rel_name}: {md5} != {expected}")
+              rel = Path("assets") / rel_name
+              rel.write_bytes(data)
+              b64_path = Path("assets") / f"{rel_name}.b64"
+              b64_path.write_text(base64.b64encode(data).decode("ascii"))
+              for staging in ("staging-simplify", "staging-feedback"):
+                  staged = Path(staging) / "assets" / rel_name
+                  if staged.parent.is_dir():
+                      staged.write_bytes(data)
+                      print("mirrored", staged)
+              print(rel, len(data), md5)
+
+          # Prefer in-repo zlib chunks over cross-repo fetch
+          write_binary("home-workday-woodwork-Dev4WPAv.jpg", assemble_from_zlib_chunks("wood"))
+          write_binary("workday-trade-general-contractor-01Q32nWx.jpg", assemble_from_zlib_chunks("gc"))
           PY
       - name: Keep YjYaDdGR FleetFit CTA; point GC card at clean SVG
         run: |
