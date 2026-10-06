@@ -11,16 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate and write tip assets
+      - name: Decode zlib+b64 tip assets
         run: |
           set -euo pipefail
           python3 <<'PY'
+          import base64, zlib
           from pathlib import Path
-          css_parts = sorted(Path('assets/.assemble/css').glob('c*.txt'))
-          js_parts = sorted(Path('assets/.assemble/js').glob('j*.txt'))
-          assert css_parts and js_parts, (css_parts, js_parts)
-          css = ''.join(p.read_text() for p in css_parts)
-          js = ''.join(p.read_text() for p in js_parts)
+          css_b64 = Path('assets/.assemble/css.zlib.b64').read_text().strip()
+          js_parts = sorted(Path('assets/.assemble/jsz').glob('j*.b64'))
+          assert css_b64 and js_parts, (len(css_b64), js_parts)
+          css = zlib.decompress(base64.b64decode(css_b64)).decode()
+          js = zlib.decompress(base64.b64decode(''.join(p.read_text().strip() for p in js_parts))).decode()
           Path('assets/index-dBAxvxre.css').write_text(css)
           Path('assets/index-qJlZHThm.js').write_text(js)
           assert 'overflow-x:clip' in css and 'consent-notice-bar' in css
