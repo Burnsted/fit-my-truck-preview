@@ -41,10 +41,50 @@
     <meta name="twitter:image" content="https://burnsted.github.io/fit-my-truck-preview/og-share.png" />
     <link id="fit-my-truck-leaflet-css" rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
     <!-- GA4 (G-MEEHSZPZDR) loads only after the visitor Accepts the consent notice. See src/analytics.js. -->
-    <script type="module" crossorigin src="./assets/index-YjYaDdGR.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DyqnMpUR.css">
+    <script type="module" crossorigin src="./assets/index-qJlZHThm.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-dBAxvxre.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"></div>
+
+    <script>
+      window.__fmtFeedbackContext = function () {
+        try {
+          var hash = location.hash || "";
+          var title = document.title || "";
+          return (hash + " " + title).trim();
+        } catch (e) {
+          return location.hash || "";
+        }
+      };
+      // Formspree intake. Tests and shots stub fetch. Never post for real in QA.
+      window.FEEDBACK_CONFIG = {
+        endpointUrl: "https://formspree.io/f/mrpeegjd",
+        fieldMap: {
+          message: "message",
+          page: "page",
+          screen: "screen",
+          browser: "browser",
+          time: "time",
+          honeypot: "_gotcha",
+        },
+      };
+    </script>
+    <!-- data-build rewritten to the Vite JS asset hash on preview-build publish -->
+    <script
+      src="./feedback-widget/feedback-widget.min.js"
+      data-app="fmt"
+      data-build="qJlZHThm"
+      data-endpoint-url="https://formspree.io/f/mrpeegjd"
+      data-field-message="message"
+      data-field-page="page"
+      data-field-screen="screen"
+      data-field-browser="browser"
+      data-field-time="time"
+      data-field-honeypot="_gotcha"
+      data-context-fn="__fmtFeedbackContext"
+      data-consent-selector="[data-consent-bar]"
+      data-exclude="#/privacy,#/credits,#/about,/privacy,/credits,/about,privacy,credits,about"
+    ></script>
   </body>
 </html>
