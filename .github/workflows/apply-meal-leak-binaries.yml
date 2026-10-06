@@ -1,0 +1,90 @@
+name: Apply meal-leak binary fixes
+on:
+  push:
+    branches: [cursor/strip-meal-leak-assets-3223]
+    paths:
+      - "assets/*.jpg.b64"
+      - "assets/*.jpg.b64.part*"
+      - ".github/workflows/apply-meal-leak-binaries.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cursor/strip-meal-leak-assets-3223
+      - name: Assemble and decode cleaned JPG binaries
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import base64, hashlib
+          from pathlib import Path
+
+          def load_b64(stem: str) -> bytes:
+              single = Path(f"assets/{stem}.b64")
+              if single.exists():
+                  return base64.b64decode(single.read_text())
+              parts = sorted(Path("assets").glob(f"{stem}.b64.part*"))
+              if not parts:
+                  raise SystemExit(f"missing b64 for {stem}")
+              return base64.b64decode("".join(p.read_text() for p in parts))
+
+          mapping = {
+              "home-workday-woodwork-Dev4WPAv.jpg": "home-workday-woodwork-Dev4WPAv.jpg",
+              "workday-trade-general-contractor-01Q32nWx.jpg": "workday-trade-general-contractor-01Q32nWx.jpg",
+          }
+          for stem, rel_name in mapping.items():
+              data = load_b64(stem)
+              expected = {
+                  "home-workday-woodwork-Dev4WPAv.jpg": "ec87762a5018f982b7144fcad7909b9f",
+                  "workday-trade-general-contractor-01Q32nWx.jpg": "394dbbfbbd8ab19c4e6306bf53224e69",
+              }
+              md5 = hashlib.md5(data).hexdigest()
+              if md5 != expected[rel_name]:
+                  raise SystemExit(f"md5 mismatch {rel_name}: {md5}")
+              rel = Path("assets") / rel_name
+              rel.write_bytes(data)
+              print(rel, len(data), md5)
+              for staging in ("staging-simplify", "staging-feedback"):
+                  staged = Path(staging) / "assets" / rel_name
+                  if staged.parent.is_dir():
+                      staged.write_bytes(data)
+                      print("mirrored", staged)
+          PY
+      - name: Keep YjYaDdGR FleetFit CTA; point GC card at clean SVG
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          js = Path("assets/index-YjYaDdGR.js")
+          text = js.read_text()
+          assert "fleetfit" in text.lower(), "FleetFit CTA missing before patch"
+          old = "workday-trade-general-contractor-01Q32nWx.jpg"
+          new = "workday-trade-general-contractor.svg"
+          if old in text:
+              text = text.replace(old, new, 1)
+              print("patched GC URL to SVG")
+          elif new in text:
+              print("GC already on SVG")
+          else:
+              raise SystemExit("could not find GC image ref to patch")
+          assert "home-workday-woodwork-Dev4WPAv.jpg" in text, "woodwork hashed ref must stay"
+          assert "fleetfit" in text.lower(), "FleetFit CTA missing after patch"
+          js.write_text(text)
+          print("FleetFit CTA preserved")
+          PY
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "fix(assets): apply meal-free woodwork + GC binaries (keep YjYaDdGR FleetFit CTA)"
+            git push
+          fi
