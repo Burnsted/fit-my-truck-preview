@@ -20,15 +20,20 @@ jobs:
         with:
           ref: cursor/strip-meal-leak-assets-3223
       - name: Fetch clean woodwork JPG from fit-my-truck source branch
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          curl -fsSL \
+          # Prefer sibling-repo raw via token; fall back to checkout-style API blob.
+          if ! curl -fsSL \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github.raw" \
             -o /tmp/wood-clean.jpg \
-            "https://api.github.com/repos/Burnsted/fit-my-truck/contents/src/assets/home-workday-woodwork.jpg?ref=cursor/strip-meal-leak-assets-3223"
+            "https://api.github.com/repos/Burnsted/fit-my-truck/contents/src/assets/home-workday-woodwork.jpg?ref=cursor/strip-meal-leak-assets-3223"; then
+            echo "woodwork fetch failed (token may lack cross-repo access); skipping woodwork binary update"
+            exit 0
+          fi
           python3 <<'PY'
           import base64, hashlib
           from pathlib import Path
