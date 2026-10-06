@@ -1,0 +1,41 @@
+name: assemble-preview-assets
+on:
+  push:
+    paths:
+      - 'assets/.assemble/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decompress and write tip assets
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import base64, zlib
+          from pathlib import Path
+          css_b64 = Path('assets/.assemble/css.zlib.b64').read_text().strip()
+          css = zlib.decompress(base64.b64decode(css_b64))
+          Path('assets/index-dBAxvxre.css').write_bytes(css)
+          js_parts = sorted(Path('assets/.assemble/jsz').glob('j*.b64'))
+          js_b64 = ''.join(p.read_text().strip() for p in js_parts)
+          js = zlib.decompress(base64.b64decode(js_b64))
+          Path('assets/index-qJlZHThm.js').write_bytes(js)
+          css_t = css.decode()
+          js_t = js.decode()
+          assert 'overflow-x:clip' in css_t and 'consent-notice-bar' in css_t
+          assert 'fmtPortal' in js_t and 'home-choice-fleet' in js_t and 'fleetfit-result-cta' in js_t
+          print('css', len(css), 'js', len(js))
+          PY
+      - name: Commit assembled assets
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/index-dBAxvxre.css assets/index-qJlZHThm.js
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "fix(consent): portal usage bar onto YjYaDdGR FleetFit+feedback tip"
+          git push
