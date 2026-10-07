@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "assets/_b64_chunks/gcphoto_*.zlib.b64"
       - "assets/_b64_chunks/gc_b64_*.txt"
       - ".github/workflows/apply-gc-photoreal-main.yml"
   workflow_dispatch:
@@ -17,18 +18,32 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Assemble photoreal GC JPG from b64 parts
+      - name: Fetch photoreal GC JPG and gcphoto zlib chunks
         run: |
           set -euo pipefail
-          python3 <<'PY'
-          import base64, hashlib
+          curl -fsSL -o /tmp/gc-photo.jpg https://litter.catbox.moe/l0xzww.jpg
+          python3 - <<'PY'
+          import hashlib
           from pathlib import Path
-          parts = sorted(Path("assets/_b64_chunks").glob("gc_b64_*.txt"))
-          assert parts, "missing gc_b64_*.txt"
-          data = base64.b64decode("".join(p.read_text().strip() for p in parts))
+          data = Path("/tmp/gc-photo.jpg").read_bytes()
           md5 = hashlib.md5(data).hexdigest()
           assert md5 == "6e11253972abb457f8a26e8a76261503", md5
           assert len(data) == 359685, len(data)
+          print("jpg ok", len(data), md5)
+          PY
+          mkdir -p assets/_b64_chunks
+          curl -fsSL -o /tmp/gcphoto_chunks.tar.gz https://litter.catbox.moe/p8w1ld.gz
+          tar -xzf /tmp/gcphoto_chunks.tar.gz -C assets/_b64_chunks
+          python3 - <<'PY'
+          import base64, hashlib, zlib
+          from pathlib import Path
+          parts = sorted(Path("assets/_b64_chunks").glob("gcphoto_*.zlib.b64"))
+          assert len(parts) == 100, len(parts)
+          data = zlib.decompress(base64.b64decode("".join(p.read_text().strip() for p in parts)))
+          md5 = hashlib.md5(data).hexdigest()
+          assert md5 == "6e11253972abb457f8a26e8a76261503", md5
+          assert data == Path("/tmp/gc-photo.jpg").read_bytes()
+          print("chunks assemble ok", len(parts), md5)
           for t in [
               Path("assets/workday-trade-general-contractor-01Q32nWx.jpg"),
               Path("staging-simplify/assets/workday-trade-general-contractor-01Q32nWx.jpg"),
@@ -47,10 +62,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/workday-trade-general-contractor-01Q32nWx.jpg \
+          git add assets/_b64_chunks/gcphoto_*.zlib.b64 \
+                  assets/workday-trade-general-contractor-01Q32nWx.jpg \
                   staging-simplify/assets/workday-trade-general-contractor-01Q32nWx.jpg \
                   staging-feedback/assets/workday-trade-general-contractor-01Q32nWx.jpg
           if git diff --cached --quiet; then echo "No changes"; else
-            git commit -m "fix(assets): live photoreal meal-free GC plate (keep FleetFit JS hashes)"
+            git commit -m "fix(assets): live photoreal meal-free GC plate + gcphoto zlib chunks"
             git push
           fi
