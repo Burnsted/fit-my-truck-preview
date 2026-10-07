@@ -1,72 +1,54 @@
-name: Apply GC photoreal to main
+# GC trade plate gate (friend preview).
+# Ted redline 2026-10-06: live GC card must use REAL production EV photos
+# (Chevy Silverado EV + Ford F-150 Lightning), not CGI / synthetic plates.
+# Do NOT re-pull the old catbox CGI (MD5 6e112539...) or merge fit-my-truck PR #37.
+name: Verify GC real-photo plate
 on:
   push:
     branches: [main]
     paths:
-      - "assets/_b64_chunks/gcphoto_*.zlib.b64"
-      - "assets/_b64_chunks/gc_b64_*.txt"
+      - "assets/workday-trade-general-contractor-01Q32nWx.jpg"
+      - "staging-simplify/assets/workday-trade-general-contractor-01Q32nWx.jpg"
+      - "staging-feedback/assets/workday-trade-general-contractor-01Q32nWx.jpg"
       - ".github/workflows/apply-gc-photoreal-main.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  apply:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Fetch photoreal GC JPG and gcphoto zlib chunks
+      - name: Assert live GC JPG is real-photo EV duo (not CGI)
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/gc-photo.jpg https://litter.catbox.moe/l0xzww.jpg
-          python3 - <<'PY'
+          python3 <<'PY'
           import hashlib
           from pathlib import Path
-          data = Path("/tmp/gc-photo.jpg").read_bytes()
-          md5 = hashlib.md5(data).hexdigest()
-          assert md5 == "6e11253972abb457f8a26e8a76261503", md5
-          assert len(data) == 359685, len(data)
-          print("jpg ok", len(data), md5)
-          PY
-          mkdir -p assets/_b64_chunks
-          curl -fsSL -o /tmp/gcphoto_chunks.tar.gz https://litter.catbox.moe/p8w1ld.gz
-          tar -xzf /tmp/gcphoto_chunks.tar.gz -C assets/_b64_chunks
-          python3 - <<'PY'
-          import base64, hashlib, zlib
-          from pathlib import Path
-          parts = sorted(Path("assets/_b64_chunks").glob("gcphoto_*.zlib.b64"))
-          assert len(parts) == 100, len(parts)
-          data = zlib.decompress(base64.b64decode("".join(p.read_text().strip() for p in parts)))
-          md5 = hashlib.md5(data).hexdigest()
-          assert md5 == "6e11253972abb457f8a26e8a76261503", md5
-          assert data == Path("/tmp/gc-photo.jpg").read_bytes()
-          print("chunks assemble ok", len(parts), md5)
-          for t in [
+          # Real Commons photos (same catalog sources FleetFit already credits):
+          # - 2024 Chevrolet Silverado EV 4WT (Elise240SX, CC BY-SA 4.0)
+          # - 2022 Ford F-150 Lightning Lariat (Elise240SX, CC BY-SA 4.0)
+          EXPECTED_MD5 = "45f15d634784ec1ceb332d490574795d"
+          CGI_REJECT = "6e11253972abb457f8a26e8a76261503"
+          paths = [
               Path("assets/workday-trade-general-contractor-01Q32nWx.jpg"),
               Path("staging-simplify/assets/workday-trade-general-contractor-01Q32nWx.jpg"),
               Path("staging-feedback/assets/workday-trade-general-contractor-01Q32nWx.jpg"),
-          ]:
-              t.parent.mkdir(parents=True, exist_ok=True)
-              t.write_bytes(data)
-              print("wrote", t, len(data), md5)
+          ]
+          for p in paths:
+              data = p.read_bytes()
+              md5 = hashlib.md5(data).hexdigest()
+              assert md5 != CGI_REJECT, f"{p} still CGI plate {md5}"
+              assert md5 == EXPECTED_MD5, f"{p} md5 {md5} != {EXPECTED_MD5}"
+              assert data[:3] == b"\xff\xd8\xff", f"{p} not jpeg"
+              print("ok", p, len(data), md5)
           for js_name in ("index-JjLgFaCi.js", "index-YjYaDdGR.js"):
               js = Path("assets") / js_name
               if js.exists():
                   assert "workday-trade-general-contractor-01Q32nWx.jpg" in js.read_text()
-                  print(js_name, "ok")
+                  print(js_name, "pointer ok")
           PY
-      - name: Commit if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/_b64_chunks/gcphoto_*.zlib.b64 \
-                  assets/workday-trade-general-contractor-01Q32nWx.jpg \
-                  staging-simplify/assets/workday-trade-general-contractor-01Q32nWx.jpg \
-                  staging-feedback/assets/workday-trade-general-contractor-01Q32nWx.jpg
-          if git diff --cached --quiet; then echo "No changes"; else
-            git commit -m "fix(assets): live photoreal meal-free GC plate + gcphoto zlib chunks"
-            git push
-          fi
