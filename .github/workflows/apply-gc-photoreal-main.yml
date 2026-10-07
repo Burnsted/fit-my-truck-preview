@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "assets/_b64_chunks/gcphoto_*.zlib.b64"
+      - "assets/_b64_chunks/gc_b64_*.txt"
       - ".github/workflows/apply-gc-photoreal-main.yml"
   workflow_dispatch:
 
@@ -17,53 +17,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Fetch photoreal GC JPG from fit-my-truck source tip
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assemble photoreal GC JPG from b64 parts
         run: |
           set -euo pipefail
-          # Prefer private-repo Contents API via token; fall back to zlib chunks.
-          if curl -fsSL \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github.raw" \
-            -o /tmp/gc-photo.jpg \
-            "https://api.github.com/repos/Burnsted/fit-my-truck/contents/src/assets/workday-trade-general-contractor.jpg?ref=cursor/strip-meal-leak-assets-3223"; then
-            echo "fetched from fit-my-truck"
-          else
-            echo "cross-repo fetch failed; assembling zlib chunks"
-            python3 <<'PY'
-          import base64, zlib
-          from pathlib import Path
-          parts = sorted(Path("assets/_b64_chunks").glob("gcphoto_*.zlib.b64"))
-          if not parts:
-              raise SystemExit("missing gcphoto chunks and cross-repo fetch failed")
-          data = zlib.decompress(base64.b64decode("".join(p.read_text().strip() for p in parts)))
-          Path("/tmp/gc-photo.jpg").write_bytes(data)
-          print("assembled", len(data))
-          PY
-          fi
           python3 <<'PY'
-          import hashlib
+          import base64, hashlib
           from pathlib import Path
-          data = Path("/tmp/gc-photo.jpg").read_bytes()
+          parts = sorted(Path("assets/_b64_chunks").glob("gc_b64_*.txt"))
+          assert parts, "missing gc_b64_*.txt"
+          data = base64.b64decode("".join(p.read_text().strip() for p in parts))
           md5 = hashlib.md5(data).hexdigest()
           assert md5 == "6e11253972abb457f8a26e8a76261503", md5
-          targets = [
+          assert len(data) == 359685, len(data)
+          for t in [
               Path("assets/workday-trade-general-contractor-01Q32nWx.jpg"),
               Path("staging-simplify/assets/workday-trade-general-contractor-01Q32nWx.jpg"),
               Path("staging-feedback/assets/workday-trade-general-contractor-01Q32nWx.jpg"),
-          ]
-          for t in targets:
+          ]:
               t.parent.mkdir(parents=True, exist_ok=True)
               t.write_bytes(data)
               print("wrote", t, len(data), md5)
           for js_name in ("index-JjLgFaCi.js", "index-YjYaDdGR.js"):
               js = Path("assets") / js_name
-              if not js.exists():
-                  continue
-              text = js.read_text()
-              assert "workday-trade-general-contractor-01Q32nWx.jpg" in text, js_name
-              print(js_name, "GC jpg ref ok")
+              if js.exists():
+                  assert "workday-trade-general-contractor-01Q32nWx.jpg" in js.read_text()
+                  print(js_name, "ok")
           PY
       - name: Commit if changed
         run: |
@@ -71,10 +49,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets/workday-trade-general-contractor-01Q32nWx.jpg \
                   staging-simplify/assets/workday-trade-general-contractor-01Q32nWx.jpg \
-                  staging-feedback/assets/workday-trade-general-contractor-01Q32nWx.jpg || true
-          if git diff --cached --quiet; then
-            echo "No changes"
-          else
+                  staging-feedback/assets/workday-trade-general-contractor-01Q32nWx.jpg
+          if git diff --cached --quiet; then echo "No changes"; else
             git commit -m "fix(assets): live photoreal meal-free GC plate (keep FleetFit JS hashes)"
             git push
           fi
